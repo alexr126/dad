@@ -9,7 +9,7 @@ class UserController extends Controller
 {
 
     public function index(){
-
+        
     }
 
     public function show(User $user){
@@ -46,6 +46,13 @@ class UserController extends Controller
 
     public function destroy($user){
 
+    }
+
+
+
+    public function games()
+    {
+        return $this->belongsToMany('App\Game');
     }
 
 }
