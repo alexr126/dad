@@ -15,7 +15,13 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'nickname', 'admin', 'blocked', ' reason_blocked', 'reason_reactivated'
+        'name', 
+        'email', 
+        'nickname', 
+        'admin', 
+        'blocked', 
+        'reason_blocked', 
+        'reason_reactivated'
     ];
 
     /**
@@ -26,5 +32,11 @@ class User extends Authenticatable
     protected $hidden = [
         'password'
     ];
+
+
+    public function games()
+    {
+        return $this->belongsToMany('App\Game');
+    }
 
 }
