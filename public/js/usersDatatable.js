@@ -4,14 +4,20 @@
 	$(document).ready(function() {
 
 		$('#datatable').DataTable( {
-		sorting: true,
 		ajax: {
 			url: 'api/users',
 			dataSrc: ''
 		},
-		columns:[{data: 'nickname'},
+		columns:[{data: 'id'},
+				 {data: 'nickname'},
 			     {data: 'name'},
-			     {data: 'email'}]
+			     {data: 'email'},
+			     {data: 'admin'},
+			     {data: 'blocked'},
+			     {data: 'reason_blocked'},
+			     {data: 'reason_reactivated'},
+			     {data: 'created_at'},
+			     {data: 'updated_at'}]
 		});
 
 	});		

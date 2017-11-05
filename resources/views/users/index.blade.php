@@ -8,16 +8,21 @@
 
 @section('content')
 
-<div><a class="btn btn-primary" href="{{ route('users.create')}}">Add user</a></div>
-
     <br>
 
     <table id="datatable" class="table table-striped">
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Nickname</th>
                 <th>Name</th>
-                <th>Email</th>
+                <th>Email</th>                
+                <th>Admin</th>
+                <th>Blocked</th>
+                <th>Reason Blocked</th>
+                <th>Reason Reactivated</th>
+                <th>Created At</th>
+                <th>Updated At</th>
             </tr>
         </thead>
     </table>
