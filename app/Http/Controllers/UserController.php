@@ -20,10 +20,6 @@ class UserController extends Controller
 // ------------------ Create ------------------ //
 // -------------------------------------------- //
 
-    public function create(){
-
-    }
-
     public function store(StoreUserRequest $request){
 
     }
