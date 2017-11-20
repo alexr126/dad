@@ -15,5 +15,8 @@ Route::get('/', function () {
     return view('master');
 });
 
+
+Route::get('login','UserController@login');
+
 Route::model('user','App\User');
 Route::resource('users','UserController');

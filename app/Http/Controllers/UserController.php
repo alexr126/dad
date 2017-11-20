@@ -12,6 +12,10 @@ class UserController extends Controller
         return view('users.index');
     }
 
+    public function login(){
+        return view('users.login');
+    }
+
     public function show(User $user){
 
     }
