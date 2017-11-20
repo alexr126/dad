@@ -20,3 +20,6 @@ Route::get('login','UserController@login');
 
 Route::model('user','App\User');
 Route::resource('users','UserController');
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
