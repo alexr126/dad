@@ -18,5 +18,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::get('users', 'UserControllerAPI@getAll');
+Route::get('users/{id}', 'UserControllerAPI@getUser');
 
 Route::get('games', 'GameControllerAPI@getAll');
