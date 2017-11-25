@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return view('master');
+    return view('welcome');
 });
 
 
@@ -22,4 +22,4 @@ Route::model('user','App\User');
 Route::resource('users','UserController');
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/master', 'HomeController@index')->name('master');
