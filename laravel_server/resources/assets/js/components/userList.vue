@@ -2,22 +2,32 @@
 	<table class="table table-striped">
 	    <thead>
 	        <tr>
-	            <th>Name</th>
-	            <th>Email</th>
-	            <th>Age</th>
-	            <th>Department</th>
-	            <th>Actions</th>
+	            <th>ID</th>
+                <th>Nickname</th>
+                <th>Name</th>
+                <th>Email</th>                
+                <th>Admin</th>
+                <th>Blocked</th>
+                <th>Reason Blocked</th>
+                <th>Reason Reactivated</th>
+                <th>Created At</th>
+                <th>Updated At</th>
+                <th>Actions</th>
 	        </tr>
 	    </thead>
 	    <tbody>
 	        <tr v-for="user in users"  :key="user.id" :class="{activerow: editingUser === user}">
-	            <td>{{ user.name }}</td>
-	            <td>{{ user.email }}</td>
-	            <td>{{ user.age }}</td>
-	            <td>{{ user.department }}</td>
+	            <td>{{ user.id }}</td>
+                <td>{{ user.nickname }}</td>
+                <td>{{ user.name }}</td>
+            	<td>{{ user.email }}</td>
+            	<td>{{ user.admin }}</td>
+            	<td>{{ user.blocked }}</td>
+            	<td>{{ user.reason_blocked }}</td>
+            	<td>{{ user.reason_reactivated }}</td>
+            	<td>{{ user.created_at }}</td>
+            	<td>{{ user.updated_at }}</td>
 	            <td>
-					<a class="btn btn-xs btn-success" v-on:click.prevent="definePlayer(user,1)">P1</a>
-					<a class="btn btn-xs btn-success" v-on:click.prevent="definePlayer(user,2)">P2</a>
 	                <a class="btn btn-xs btn-primary" v-on:click.prevent="editUser(user)">Edit</a>
 	                <a class="btn btn-xs btn-danger" v-on:click.prevent="deleteUser(user)">Delete</a>
 	            </td>
@@ -43,10 +53,6 @@
             deleteUser: function(user){
                 this.editingUser = null;
                 this.$emit('delete-click', user);
-			},
-			definePlayer: function(user,player){
-				this.$root.$data['player'+player] = user;
-				this.$emit('message', user.name+' selected as Player'+player);
 			}
         },		
 	}

@@ -23,7 +23,7 @@ class UserControllerAPI extends Controller
         }
     }
 
-    public function getUser($id)
+    /*public function getUser($id)
     {
         return new UserResource(User::find($id));
     }
@@ -70,5 +70,5 @@ class UserControllerAPI extends Controller
             $totalEmail = DB::table('users')->where('email', '=', $request->email)->count();
         }
         return response()->json($totalEmail == 0);
-    }
+    }*/
 }

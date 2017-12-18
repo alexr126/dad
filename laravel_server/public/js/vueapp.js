@@ -45609,7 +45609,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/user.vue"
+Component.options.__file = "resources\\assets\\js\\components\\user.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {  return key !== "default" && key.substr(0, 2) !== "__"})) {  console.error("named exports are not supported in *.vue files.")}
 
 /* hot reload */
@@ -45666,7 +45666,7 @@ exports = module.exports = __webpack_require__(1)(undefined);
 
 
 // module
-exports.push([module.i, "\np[data-v-18ac2288] {\n\tfont-size: 2em;\n\ttext-align: center;\n}\n", ""]);
+exports.push([module.i, "\np[data-v-18ac2288] {\r\n\tfont-size: 2em;\r\n\ttext-align: center;\n}\r\n", ""]);
 
 // exports
 
@@ -45832,7 +45832,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/userList.vue"
+Component.options.__file = "resources\\assets\\js\\components\\userList.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {  return key !== "default" && key.substr(0, 2) !== "__"})) {  console.error("named exports are not supported in *.vue files.")}
 
 /* hot reload */
@@ -45926,6 +45926,16 @@ exports.push([module.i, "\ntr.activerow[data-v-437a4046] {\n  \t\tbackground: #1
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 // Component code (not registered)
 module.exports = {
@@ -45943,10 +45953,6 @@ module.exports = {
 		deleteUser: function deleteUser(user) {
 			this.editingUser = null;
 			this.$emit('delete-click', user);
-		},
-		definePlayer: function definePlayer(user, player) {
-			this.$root.$data['player' + player] = user;
-			this.$emit('message', user.name + ' selected as Player' + player);
 		}
 	}
 };
@@ -45969,43 +45975,27 @@ var render = function() {
           "tr",
           { key: user.id, class: { activerow: _vm.editingUser === user } },
           [
+            _c("td", [_vm._v(_vm._s(user.id))]),
+            _vm._v(" "),
+            _c("td", [_vm._v(_vm._s(user.nickname))]),
+            _vm._v(" "),
             _c("td", [_vm._v(_vm._s(user.name))]),
             _vm._v(" "),
             _c("td", [_vm._v(_vm._s(user.email))]),
             _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(user.age))]),
+            _c("td", [_vm._v(_vm._s(user.admin))]),
             _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(user.department))]),
+            _c("td", [_vm._v(_vm._s(user.blocked))]),
+            _vm._v(" "),
+            _c("td", [_vm._v(_vm._s(user.reason_blocked))]),
+            _vm._v(" "),
+            _c("td", [_vm._v(_vm._s(user.reason_reactivated))]),
+            _vm._v(" "),
+            _c("td", [_vm._v(_vm._s(user.created_at))]),
+            _vm._v(" "),
+            _c("td", [_vm._v(_vm._s(user.updated_at))]),
             _vm._v(" "),
             _c("td", [
-              _c(
-                "a",
-                {
-                  staticClass: "btn btn-xs btn-success",
-                  on: {
-                    click: function($event) {
-                      $event.preventDefault()
-                      _vm.definePlayer(user, 1)
-                    }
-                  }
-                },
-                [_vm._v("P1")]
-              ),
-              _vm._v(" "),
-              _c(
-                "a",
-                {
-                  staticClass: "btn btn-xs btn-success",
-                  on: {
-                    click: function($event) {
-                      $event.preventDefault()
-                      _vm.definePlayer(user, 2)
-                    }
-                  }
-                },
-                [_vm._v("P2")]
-              ),
-              _vm._v(" "),
               _c(
                 "a",
                 {
@@ -46047,13 +46037,25 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
+        _c("th", [_vm._v("ID")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Nickname")]),
+        _vm._v(" "),
         _c("th", [_vm._v("Name")]),
         _vm._v(" "),
         _c("th", [_vm._v("Email")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Age")]),
+        _c("th", [_vm._v("Admin")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Department")]),
+        _c("th", [_vm._v("Blocked")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Reason Blocked")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Reason Reactivated")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Created At")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Updated At")]),
         _vm._v(" "),
         _c("th", [_vm._v("Actions")])
       ])
@@ -46099,7 +46101,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/userEdit.vue"
+Component.options.__file = "resources\\assets\\js\\components\\userEdit.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {  return key !== "default" && key.substr(0, 2) !== "__"})) {  console.error("named exports are not supported in *.vue files.")}
 
 /* hot reload */
@@ -46512,7 +46514,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/departmentList.vue"
+Component.options.__file = "resources\\assets\\js\\components\\departmentList.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {  return key !== "default" && key.substr(0, 2) !== "__"})) {  console.error("named exports are not supported in *.vue files.")}
 
 /* hot reload */
@@ -46569,7 +46571,7 @@ exports = module.exports = __webpack_require__(1)(undefined);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n/*\t  Specific style applied only on the component*/\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\r\n/*\t  Specific style applied only on the component*/\r\n", ""]);
 
 // exports
 
@@ -46693,7 +46695,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/singleplayer_tictactoe.vue"
+Component.options.__file = "resources\\assets\\js\\components\\singleplayer_tictactoe.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {  return key !== "default" && key.substr(0, 2) !== "__"})) {  console.error("named exports are not supported in *.vue files.")}
 
 /* hot reload */
@@ -47013,7 +47015,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/multiplayer_tictactoe.vue"
+Component.options.__file = "resources\\assets\\js\\components\\multiplayer_tictactoe.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {  return key !== "default" && key.substr(0, 2) !== "__"})) {  console.error("named exports are not supported in *.vue files.")}
 
 /* hot reload */
@@ -47278,7 +47280,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/lobby.vue"
+Component.options.__file = "resources\\assets\\js\\components\\lobby.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {  return key !== "default" && key.substr(0, 2) !== "__"})) {  console.error("named exports are not supported in *.vue files.")}
 
 /* hot reload */
@@ -47470,7 +47472,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/components/game-tictactoe.vue"
+Component.options.__file = "resources\\assets\\js\\components\\game-tictactoe.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {  return key !== "default" && key.substr(0, 2) !== "__"})) {  console.error("named exports are not supported in *.vue files.")}
 
 /* hot reload */
@@ -47527,7 +47529,7 @@ exports = module.exports = __webpack_require__(1)(undefined);
 
 
 // module
-exports.push([module.i, "\n.gameseparator[data-v-3d129664]{\n    border-style: solid;\n    border-width: 2px 0 0 0;\n    border-color: black;\n}\n", ""]);
+exports.push([module.i, "\n.gameseparator[data-v-3d129664]{\r\n    border-style: solid;\r\n    border-width: 2px 0 0 0;\r\n    border-color: black;\n}\r\n", ""]);
 
 // exports
 

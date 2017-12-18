@@ -17,8 +17,11 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email', 
-        'age',
-        'department_id',
+        'nickname', 
+        'admin', 
+        'blocked', 
+        'reason_blocked', 
+        'reason_reactivated'
     ];
 
     /**
@@ -27,11 +30,11 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password'
     ];
 
-    public function department()
+    public function games()
     {
-        return $this->belongsTo(Department::class);
+        return $this->belongsToMany('App\Game');
     }
 }
