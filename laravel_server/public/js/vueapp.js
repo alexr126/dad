@@ -1375,7 +1375,7 @@ module.exports = Cancel;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(13);
-module.exports = __webpack_require__(89);
+module.exports = __webpack_require__(94);
 
 
 /***/ }),
@@ -1412,8 +1412,9 @@ var user = Vue.component('user', __webpack_require__(49));
 var department = Vue.component('department', __webpack_require__(64));
 var singleplayer_game = Vue.component('singlegame', __webpack_require__(69));
 var multiplayerGame = Vue.component('multiplayergame', __webpack_require__(74));
+var game = Vue.component('game', __webpack_require__(89));
 
-var routes = [{ path: '/', redirect: '/login' }, { path: '/login', component: login }, { path: '/users', component: user }, { path: '/departments', component: department }, { path: '/singletictactoe', component: singleplayer_game }, { path: '/multitictactoe', component: multiplayerGame }];
+var routes = [{ path: '/', redirect: '/login' }, { path: '/login', component: login }, { path: '/users', component: user }, { path: '/departments', component: department }, { path: '/singletictactoe', component: singleplayer_game }, { path: '/multitictactoe', component: multiplayerGame }, { path: '/game', component: game }];
 
 var router = new __WEBPACK_IMPORTED_MODULE_0_vue_router__["a" /* default */]({
   routes: routes
@@ -45667,7 +45668,7 @@ exports = module.exports = __webpack_require__(1)(undefined);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -45707,8 +45708,14 @@ module.exports = function listToStyles (parentId, list) {
 
 /***/ }),
 /* 47 */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__register_vue__ = __webpack_require__(104);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__register_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__register_vue__);
+//
+//
 //
 //
 //
@@ -45734,24 +45741,37 @@ module.exports = function listToStyles (parentId, list) {
 //
 //
 
-module.exports = {
-    props: ['user'],
-    methods: {
-        login: function login() {
-            console.log("User Loged In!");
-            console.log(this.user);
-            /*axios.post('api/users/'+this.user.id, this.user)
-                .then(response=>{
-                	// Copy object properties from response.data.data to this.user
-                	// without creating a new reference
-                	Object.assign(this.user, response.data.data);
-                });*/
-        },
-        register: function register() {
-            console.log("Register User!");
-        }
-    }
-};
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+	data: function data() {
+		return {
+			login: {
+				email: "",
+				password: ""
+			}
+		};
+	},
+
+	methods: {
+		handleLoginSubmit: function handleLoginSubmit() {
+			var loginData = {
+				grant_type: 'password',
+				client_id: '2',
+				client_secret: 'gzEwHTp7kTbnMFkHKWVH1HCTp9pGa0eUWdD6Rpfb',
+				username: this.login.email,
+				password: this.login.password,
+				scope: ''
+			};
+			axios.post('login', loginData).then(function (response) {
+				console.log(response.data.data);
+			});
+		},
+		register: function register() {}
+	},
+	components: {
+		'registration': __WEBPACK_IMPORTED_MODULE_0__register_vue___default.a
+	}
+});
 
 /***/ }),
 /* 48 */
@@ -45764,39 +45784,98 @@ var render = function() {
   return _c("div", { staticClass: "jumbotron" }, [
     _c("h2", [_vm._v("Login")]),
     _vm._v(" "),
-    _vm._m(0),
-    _vm._v(" "),
-    _vm._m(1),
-    _vm._v(" "),
-    _c("div", { staticClass: "form-group" }, [
-      _c(
-        "a",
-        {
-          staticClass: "btn btn-default",
-          on: {
-            click: function($event) {
-              $event.preventDefault()
-              _vm.login()
-            }
+    _c(
+      "form",
+      {
+        on: {
+          submit: function($event) {
+            $event.preventDefault()
+            _vm.handleLoginSubmit($event)
           }
-        },
-        [_vm._v("Login")]
-      ),
-      _vm._v(" "),
-      _c(
-        "a",
-        {
-          staticClass: "btn btn-default",
-          on: {
-            click: function($event) {
-              $event.preventDefault()
-              _vm.register()
+        }
+      },
+      [
+        _c("div", { staticClass: "form-group" }, [
+          _c("label", { attrs: { for: "inputName" } }, [_vm._v("Username")]),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.email,
+                expression: "email"
+              }
+            ],
+            staticClass: "form-control",
+            attrs: {
+              type: "text",
+              name: "name",
+              id: "inputName",
+              placeholder: "Enter your e-mail or nickname"
+            },
+            domProps: { value: _vm.email },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.email = $event.target.value
+              }
             }
+          })
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "form-group" }, [
+          _c("label", { attrs: { for: "inputPassword" } }, [
+            _vm._v("Password")
+          ]),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.password,
+                expression: "password"
+              }
+            ],
+            staticClass: "form-control",
+            attrs: {
+              type: "password",
+              name: "password",
+              id: "inputPassword",
+              placeholder: "Enter your password"
+            },
+            domProps: { value: _vm.password },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.password = $event.target.value
+              }
+            }
+          })
+        ]),
+        _vm._v(" "),
+        _vm._m(0)
+      ]
+    ),
+    _vm._v(" "),
+    _c(
+      "button",
+      {
+        staticClass: "btn btn-default",
+        on: {
+          click: function($event) {
+            $event.preventDefault()
+            _vm.register()
           }
-        },
-        [_vm._v("Register")]
-      )
-    ])
+        }
+      },
+      [_vm._v("Register")]
+    )
   ])
 }
 var staticRenderFns = [
@@ -45805,35 +45884,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "form-group" }, [
-      _c("label", { attrs: { for: "inputName" } }, [_vm._v("Name")]),
-      _vm._v(" "),
-      _c("input", {
-        staticClass: "form-control",
-        attrs: {
-          type: "text",
-          name: "name",
-          id: "inputName",
-          placeholder: "E-mail/Nickname"
-        }
-      })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-group" }, [
-      _c("label", { attrs: { for: "inputName" } }, [_vm._v("Passord")]),
-      _vm._v(" "),
-      _c("input", {
-        staticClass: "form-control",
-        attrs: {
-          type: "password",
-          name: "password",
-          id: "inputPassword",
-          placeholder: "Passord"
-        }
-      })
+      _c("button", { staticClass: "btn btn-default" }, [_vm._v("Login")])
     ])
   }
 ]
@@ -48079,9 +48130,832 @@ if (false) {
 
 /***/ }),
 /* 89 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(90)
+}
+var normalizeComponent = __webpack_require__(3)
+/* script */
+var __vue_script__ = __webpack_require__(92)
+/* template */
+var __vue_template__ = __webpack_require__(93)
+/* template functional */
+  var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources\\assets\\js\\components\\memory.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {  return key !== "default" && key.substr(0, 2) !== "__"})) {  console.error("named exports are not supported in *.vue files.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-16e2d904", Component.options)
+  } else {
+    hotAPI.reload("data-v-16e2d904", Component.options)
+' + '  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 90 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(91);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(2)("a1ecda88", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-16e2d904\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0&bustCache!./memory.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-16e2d904\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0&bustCache!./memory.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 91 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 92 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            title: 'Memory',
+            showSuccess: true,
+            showFailure: false,
+            successMessage: '',
+            failMessage: '',
+            currentValue: 1, //Current player playing. 
+            currentMove: 0,
+            gameEnded: false,
+            boardClass: new Board(2),
+            openValue: [], //Do the board with classes. There is only need for one board
+            // And, on the server, We should have the "boardDone" ready to go!
+            startGame: true //Just for the start, to look pretty! (Will be needed, stay!)
+        };
+    },
+    methods: {
+        pieceImageURL: function pieceImageURL(key) {
+            //To show the image on each square of the board.
+            /*if(piece == '0'){
+                return 'img/' + 'hidden' + '.png';
+            }else{
+                let imgSrc = String(piece);
+                return 'img/' + imgSrc + '.png';       
+            }*/
+            return this.boardClass.board[key].imagePath();
+        },
+        clickPiece: function clickPiece(index) {
+            //When a player clicks a piece.
+            //Validations on Console. Explore it!
+            console.log('Clicked on ' + index);
+            console.log(this.boardClass.board);
+
+            //If the game already ended OR if the piece is already clicked/Opened, then do nothing.
+            if (!this.boardClass.board[index].isHidden || this.gameEnded || this.startGame) return;
+
+            this.boardClass.board[index].flip();
+            // this.boardClass.board[index].value = this.boardClass.board[index].trueValue;
+
+            //This "openValue" is a way to see both clicked pieces. (Push adds a node)
+            this.openValue.push(this.boardClass.board[index]);
+
+            //Counter, for the number of moves each player has.
+            this.currentMove++;
+
+            //If the player only played ONE piece, we need to let him play the other!
+            if (this.currentMove == 2) {
+
+                //We need to check now if there is 2 equal pieces.
+                this.checkValuesAreEqual();
+
+                //Lets restart the counter!
+                this.currentMove = 0;
+
+                //Reset the array!
+                this.openValue = [];
+
+                //On the end, we need to check if the game is complete!
+                if (this.isBoardComplete()) {
+                    this.gameEnded = true;
+                    this.showSuccess = true;
+                    this.successMessage = 'Check who won.'; //Seriously, check who won! Should be done on server, by having 2 arrays or smth! Do it Z 
+                }
+            } else {
+                    //Nothing happens! The current player can play another piece!
+                }
+        },
+        restartGame: function restartGame() {
+            // We are restarting the game. We are sorting the current array, like the teacher said: "Com Randoms, façam um re-order do array. Apanhem 2 posições, e troquem uma com a outra". 
+            console.log('restartGame / startGame');
+            this.board = new Board(2);
+            this.showSuccess = false;
+            this.showFailure = false;
+            this.successMessage = '';
+            this.failMessage = '';
+            this.currentValue = 1;
+            this.gameEnded = false;
+            this.startGame = false;
+        },
+        checkValuesAreEqual: function checkValuesAreEqual() {
+            //Checking if both pieces are equal. No need to validation, since this function is only called IF there are 2 numbers on "OpenValue"
+            console.log("Checking if Pieces are equal.");
+            if (this.openValue[0].trueValue == this.openValue[1].trueValue) {
+                //They are equal
+                console.log("they are equal");
+
+                //Object.assign(this.boardBefore, this.board);
+
+                //console.log(this.boardBefore);
+                console.log(this.boardClass.board);
+
+                //The player need to play again!
+                this.successMessage = 'Player ' + this.currentValue + ' has Played. Play again!';
+                this.showSuccess = true;
+            } else {
+                //If they aren't, we need to re-change to the original Board!
+                //Timeout first..
+                //sleep(1000); [SetTimeout(asd)! On Server] CleatTimeout check them all! ToDo:  
+                console.log("They aren't equal.");
+
+                // Object.assign(this.board, this.boardBefore);
+                this.openValue[0].flip();
+                this.openValue[1].flip();
+
+                console.log(this.boardClass.board);
+
+                //Lets change the player.
+                this.successMessage = 'Player ' + this.currentValue + ' has Played';
+                this.showSuccess = true;
+                this.currentValue = this.currentValue == 1 ? 2 : 1; //Change player //Do :     this.currentValue%MAX_PLAYERS+1 
+            }
+        },
+        isBoardComplete: function isBoardComplete() {
+            //Checking if the board is completely "Open".
+            var returnValue = true;
+            this.boardClass.board.forEach(function (element) {
+                if (element.isHidden == true) {
+                    returnValue = false;
+                    console.log(returnValue);
+                    return;
+                }
+            });
+            console.log(returnValue);
+            return returnValue;
+        }
+    },
+    computed: {
+        currentPlayer: function currentPlayer() {
+            //For the lols (Seriously tho, upgrade this Z >:()
+            return 'Player ' + this.currentValue;
+        }
+    },
+    mounted: function mounted() {
+        //Do something! :V
+    }
+});
+
+var Board = function () {
+    function Board(numberOfPlayersOrXAxis, yAxis, size) {
+        _classCallCheck(this, Board);
+
+        // https://stackoverflow.com/questions/3220721/javascript-pattern-for-multiple-constructors
+        console.log("Entered on Board.");
+        if (yAxis === undefined) {
+            // We don't want to go for custom board!
+            this.constructWithNumberOfPlayers(numberOfPlayersOrXAxis);
+        } else {
+            this.constructWithXAxisAndYAxis(numberOfPlayersOrXAxis, yAxis, size);
+        }
+    }
+
+    _createClass(Board, [{
+        key: 'constructWithNumberOfPlayers',
+        value: function constructWithNumberOfPlayers(numberOfPlayers) {
+            this.board = [];
+            this.numberOfPlayers = numberOfPlayers;
+
+            console.log(this.numberOfPlayers);
+            if (this.numberOfPlayers == 1 || this.numberOfPlayers == 2) {
+                //Board needs to be 4x4
+                this.board = this.createBoard(4, 4, 16);
+            } else if (this.numberOfPlayers == 3) {
+                //Board needs to be 4*6
+                this.board = this.createBoard(4, 6, 24);
+            } else if (this.numberOfPlayers == 4) {
+                //Board needs to be 6*6
+                this.board = this.createBoard(6, 6, 36);
+            } else {
+                return;
+            }
+        }
+    }, {
+        key: 'constructWithXAxisAndYAxis',
+        value: function constructWithXAxisAndYAxis(xAxis, yAxis, size) {
+            this.board = this.createBoard(this.xAxis, this.yAxis, size);
+        }
+    }, {
+        key: 'createBoard',
+        value: function createBoard(x, y, size) {
+            var board = new Array(size);
+            //We have the board now. We need to populate it with the Pieces.
+            var trueValue = 0;
+            var counter = 0;
+            for (var i = 0; i < size; i++) {
+                board[i] = new Piece(trueValue);
+                counter++;
+                if (counter == 2) {
+                    counter = 0;trueValue++;
+                }
+            }
+            for (var _i = 0; _i < 100; _i++) {
+                var positionOne = Math.floor(Math.random() * (size - 0 + 1 - 1)) + 0;
+                var positionTwo = Math.floor(Math.random() * (size - 0 + 1 - 1)) + 0;
+
+                var temp = board[positionOne];
+                board[positionOne] = board[positionTwo];
+                board[positionTwo] = temp;
+            }
+            console.log(board);
+            console.log(x + "__" + y + "__" + size + "!");
+            return board;
+        }
+    }]);
+
+    return Board;
+}();
+
+var Piece = function () {
+    function Piece(trueValue) {
+        _classCallCheck(this, Piece);
+
+        console.log("new Piece!");
+        this.isHidden = true; //true = Hidden.
+        this.trueValue = trueValue;
+        this.pathHidden = 'img/' + 'hidden' + '.png';
+        this.pathFlip = 'img/' + String(this.trueValue) + '.png';
+    }
+
+    _createClass(Piece, [{
+        key: 'imagePath',
+        value: function imagePath() {
+            //To show the image on each square of the board.
+            if (this.isHidden == true) return this.pathHidden;else return this.pathFlip;
+        }
+    }, {
+        key: 'flip',
+        value: function flip() {
+            this.isHidden = !this.isHidden;
+        }
+    }]);
+
+    return Piece;
+}();
+
+/***/ }),
+/* 93 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _c("div", [
+      _c("h3", { staticClass: "text-center" }, [_vm._v(_vm._s(_vm.title))]),
+      _vm._v(" "),
+      _c("br"),
+      _vm._v(" "),
+      _c("h2", [_vm._v("Current Player : " + _vm._s(_vm.currentPlayer) + " ")]),
+      _vm._v(" "),
+      _c("h2", [_vm._v("Current Move : " + _vm._s(_vm.currentMove) + " ")]),
+      _vm._v(" "),
+      _c("br")
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "game-zone-content" }, [
+      _vm.showSuccess
+        ? _c("div", { staticClass: "alert alert-success" }, [
+            _c(
+              "button",
+              {
+                staticClass: "close-btn",
+                attrs: { type: "button" },
+                on: {
+                  click: function($event) {
+                    _vm.showSuccess = false
+                  }
+                }
+              },
+              [_vm._v("×")]
+            ),
+            _vm._v(" "),
+            _c("strong", [
+              _vm._v(_vm._s(_vm.successMessage) + "     \n                "),
+              _c(
+                "a",
+                {
+                  directives: [
+                    {
+                      name: "show",
+                      rawName: "v-show",
+                      value: _vm.startGame,
+                      expression: "startGame"
+                    }
+                  ],
+                  on: {
+                    click: function($event) {
+                      $event.preventDefault()
+                      _vm.restartGame($event)
+                    }
+                  }
+                },
+                [_vm._v("Start Game")]
+              ),
+              _vm._v(" "),
+              _c(
+                "a",
+                {
+                  directives: [
+                    {
+                      name: "show",
+                      rawName: "v-show",
+                      value: _vm.gameEnded,
+                      expression: "gameEnded"
+                    }
+                  ],
+                  on: {
+                    click: function($event) {
+                      $event.preventDefault()
+                      _vm.restartGame($event)
+                    }
+                  }
+                },
+                [_vm._v("Restart")]
+              )
+            ])
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "board" },
+        _vm._l(_vm.boardClass.board, function(piece, key) {
+          return _c("div", [
+            _c("img", {
+              attrs: { src: _vm.pieceImageURL(key) },
+              on: {
+                click: function($event) {
+                  _vm.clickPiece(key)
+                }
+              }
+            })
+          ])
+        })
+      ),
+      _vm._v(" "),
+      _c("hr")
+    ])
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-16e2d904", module.exports)
+  }
+}
+
+/***/ }),
+/* 94 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 95 */,
+/* 96 */,
+/* 97 */,
+/* 98 */,
+/* 99 */,
+/* 100 */,
+/* 101 */,
+/* 102 */,
+/* 103 */,
+/* 104 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(105)
+}
+var normalizeComponent = __webpack_require__(3)
+/* script */
+var __vue_script__ = __webpack_require__(107)
+/* template */
+var __vue_template__ = __webpack_require__(108)
+/* template functional */
+  var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = "data-v-897e4240"
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources\\assets\\js\\components\\register.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {  return key !== "default" && key.substr(0, 2) !== "__"})) {  console.error("named exports are not supported in *.vue files.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-897e4240", Component.options)
+  } else {
+    hotAPI.reload("data-v-897e4240", Component.options)
+' + '  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 105 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(106);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(2)("1d69ace2", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-897e4240\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0&bustCache!./register.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-897e4240\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0&bustCache!./register.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 106 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 107 */
+/***/ (function(module, exports) {
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+module.exports = {
+	data: function data() {
+		return {
+			name: '',
+			nickname: '',
+			email: '',
+			password: ''
+		};
+	},
+
+	methods: {
+		handleRegisterSubmit: function handleRegisterSubmit() {
+			console.log(1);
+		}
+	}
+};
+
+/***/ }),
+/* 108 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "jumbotron" }, [
+    _c("h2", [_vm._v("Register")]),
+    _vm._v(" "),
+    _c(
+      "form",
+      {
+        on: {
+          submit: function($event) {
+            $event.preventDefault()
+            _vm.handleRegisterSubmit($event)
+          }
+        }
+      },
+      [
+        _c("div", { staticClass: "form-group" }, [
+          _c("label", { attrs: { for: "inputName" } }, [_vm._v("Name")]),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.name,
+                expression: "name"
+              }
+            ],
+            staticClass: "form-control",
+            attrs: { type: "text", name: "name", id: "inputName" },
+            domProps: { value: _vm.name },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.name = $event.target.value
+              }
+            }
+          })
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "form-group" }, [
+          _c("label", { attrs: { for: "inputPassword" } }, [
+            _vm._v("Nickname")
+          ]),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.nickname,
+                expression: "nickname"
+              }
+            ],
+            staticClass: "form-control",
+            attrs: { type: "text", name: "nickname", id: "inputNickname" },
+            domProps: { value: _vm.nickname },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.nickname = $event.target.value
+              }
+            }
+          })
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "form-group" }, [
+          _c("label", { attrs: { for: "inputPassword" } }, [_vm._v("E-mail")]),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.email,
+                expression: "email"
+              }
+            ],
+            staticClass: "form-control",
+            attrs: { type: "text", name: "email", id: "inputEmail" },
+            domProps: { value: _vm.email },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.email = $event.target.value
+              }
+            }
+          })
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "form-group" }, [
+          _c("label", { attrs: { for: "inputPassword" } }, [
+            _vm._v("Password")
+          ]),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.password,
+                expression: "password"
+              }
+            ],
+            staticClass: "form-control",
+            attrs: { type: "password", name: "password", id: "inputPassword" },
+            domProps: { value: _vm.password },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.password = $event.target.value
+              }
+            }
+          })
+        ]),
+        _vm._v(" "),
+        _vm._m(0),
+        _vm._v(" "),
+        _vm._m(1)
+      ]
+    )
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "form-group" }, [
+      _c("label", { attrs: { for: "inputPassword" } }, [
+        _vm._v("Reenter Password")
+      ]),
+      _vm._v(" "),
+      _c("input", {
+        staticClass: "form-control",
+        attrs: { type: "password", name: "password", id: "inputPassword" }
+      })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "form-group" }, [
+      _c("button", { staticClass: "btn btn-default" }, [_vm._v("Register")])
+    ])
+  }
+]
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-897e4240", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);

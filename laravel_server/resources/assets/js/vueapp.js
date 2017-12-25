@@ -23,6 +23,7 @@ const user = Vue.component('user', require('./components/user.vue'));
 const department = Vue.component('department', require('./components/departmentList.vue'));
 const singleplayer_game = Vue.component('singlegame', require('./components/singleplayer_tictactoe.vue'));
 const multiplayerGame = Vue.component('multiplayergame', require('./components/multiplayer_tictactoe.vue'));
+const game = Vue.component('game', require('./components/memory.vue'));
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -30,7 +31,8 @@ const routes = [
   { path: '/users', component: user },
   { path: '/departments', component: department },
   { path: '/singletictactoe', component: singleplayer_game },
-  { path: '/multitictactoe', component: multiplayerGame }
+  { path: '/multitictactoe', component: multiplayerGame },
+  { path: '/game', component: game }
 ];
 
 const router = new VueRouter({

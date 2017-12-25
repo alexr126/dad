@@ -23,11 +23,16 @@ class UserControllerAPI extends Controller
         }
     }
 
-    /*public function getUser($id)
+    public function getUser($id)
     {
         return new UserResource(User::find($id));
     }
 
+    public function getUserByName($name)
+    {
+        return new UserResource(User::find($name));
+    }
+/*
     public function store(Request $request)
     {
         $request->validate([
