@@ -1,26 +1,27 @@
 <template>
 	<div class="jumbotron">
 		<h2>Login</h2>
-		<form v-on:submit.prevent="handleLoginSubmit">
-			<div class="form-group">
-				<label for="inputName">Username</label>
-				<input
-		            type="text" class="form-control"
-		            name="name" id="inputName" 
-		            placeholder="Enter your e-mail or nickname" v-model="email"/>
-			</div>
-			<div class="form-group">
-				<label for="inputPassword">Password</label>
-				<input
-		            type="password" class="form-control"
-		            name="password" id="inputPassword" 
-		            placeholder="Enter your password" v-model="password"/>
-			</div>
-			<div class="form-group">
-		        <button class="btn btn-default">Login</button>
-		    </div>
-	    </form>
+		<div>
+			<form v-on:submit="handleLoginSubmit()">
+				<div class="form-group">
+					<label for="inputName">Username</label>
+					<input
+			            type="text" class="form-control"
+			            name="email" id="inputName" 
+			            placeholder="Enter your e-mail or nickname" v-model="email"/>
+				</div>
+				<div class="form-group">
+					<label for="inputPassword">Password</label>
+					<input
+			            type="password" class="form-control"
+			            name="password" id="inputPassword" 
+			            placeholder="Enter your password" v-model="password"/>
+				</div>
+			    <button class="btn btn-default">Login</button>
+		    </form>
+	    </div>
 		<button class="btn btn-default" v-on:click.prevent="register()">Register</button>
+		<registration v-if="registeringUser" :user='currentUser' @user-registred="handleRegisterSubmit" @cancel="cancel"></registration>
 	</div>
 </template>
 
@@ -29,29 +30,33 @@
 	export default{
 		data(){
 			return{
-				login: {
-					email: "",
-					password: ""
-				}
+				email: "",
+				password: "",
+				currentUser: null,
+				registeringUser: false
 			}
 		},
 	    methods: {
 	    	handleLoginSubmit: function(){
-	    		const loginData = {
-	    			grant_type: 'password',
-                    client_id: '2',
-                    client_secret: 'gzEwHTp7kTbnMFkHKWVH1HCTp9pGa0eUWdD6Rpfb',
-                    username: this.login.email,
-                    password: this.login.password,
-                    scope: ''
-	    		}
-	    		axios.post('login', loginData)
-	    		.then(response=>{
-	    			console.log(response.data.data);
-	    		})
+	    		this.login(this.email, this.password);	    		
 	    	},
 	    	register: function(){
-	    		
+	    		this.registeringUser = true;
+	    	},
+	    	cancel: function(){
+	    		this.registeringUser = false;
+	    	},
+	    	handleRegisterSubmit: function(user){
+	    		this.currentUser = user;
+	    		this.login(user.email, user.password);
+
+	    		//this.login
+	    	},
+	    	login: function(email, password){
+	    		this.$http.post('api/login', {email, password})
+	    		.then(response=>{
+	    			console.log(response);
+	    		})
 	    	}
 	    },
 	    components: {

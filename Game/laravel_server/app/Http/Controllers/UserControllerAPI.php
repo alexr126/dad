@@ -23,17 +23,12 @@ class UserControllerAPI extends Controller
         }
     }
 
-    /*public function getUser($id)
-    {
-        return new UserResource(User::find($id));
-    }
-
     public function store(Request $request)
     {
         $request->validate([
                 'name' => 'required',
+                'nickname' => 'required|unique:users,nickname',
                 'email' => 'required|email|unique:users,email',
-                'age' => 'integer|between:18,75',
                 'password' => 'min:3'
             ]);
         $user = new User();
@@ -42,6 +37,11 @@ class UserControllerAPI extends Controller
         $user->save();
         return response()->json(new UserResource($user), 201);
     }
+
+    /*public function getUser($id)
+    {
+        return new UserResource(User::find($id));
+    }   
 
     public function update(Request $request, $id)
     {

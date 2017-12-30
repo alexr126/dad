@@ -39,7 +39,7 @@
                 currentValue: 1, //Current player playing. 
                 currentMove: 0,
                 gameEnded: false,
-                boardClass: new Board(2),
+                boardClass: new Board(2,2,4),
                 openValue: [], //Do the board with classes. There is only need for one board
                                // And, on the server, We should have the "boardDone" ready to go!
                 startGame: true, //Just for the start, to look pretty! (Will be needed, stay!)
@@ -98,7 +98,7 @@
             },
             restartGame:function(){ // We are restarting the game. We are sorting the current array, like the teacher said: "Com Randoms, façam um re-order do array. Apanhem 2 posições, e troquem uma com a outra". 
                 console.log('restartGame / startGame');
-                this.board = new Board(2);                
+                this.boardClass = new Board(2);               
                 this.showSuccess = false;
                 this.showFailure = false;
                 this.successMessage = '';

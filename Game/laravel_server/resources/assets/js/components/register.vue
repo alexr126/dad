@@ -34,12 +34,14 @@
 				<label for="inputPassword">Reenter Password</label>
 				<input
 		            type="password" class="form-control"
-		            name="password" id="inputPassword"/>
+		            name="passwordRetype" id="inputPasswordRetype"
+		            v-model="passwordRetype"/>
 			</div>
 			<div class="form-group">
 				<button class="btn btn-default">Register</button>
 		    </div>
 	    </form>
+	    <button class="btn btn-default" v-on:click="cancel">Cancel</button>
 	</div>
 
 </template>
@@ -51,12 +53,32 @@
 				name: '',
 				nickname: '',
 				email: '',
-				password: ''
+				password: '',
+				passwordRetype: ''
 			}
 		},
 		methods: {
 			handleRegisterSubmit: function(){
-				console.log(1);
+				var passwordRetype = this.passwordRetype;
+				var password = this.password;
+
+				if(password == passwordRetype){
+					var user ={
+						name: this.name,
+						nickname: this.nickname,
+						email: this.email,
+						password
+					}
+					axios.post('api/users', user)
+					.then(response=>{
+						this.$emit('user-registred', user);
+					})
+				}else{
+					console.log('Error: passwords does not match!');
+				}
+			},
+			cancel: function(){
+				this.$emit('cancel');
 			}
 		}
 	}
