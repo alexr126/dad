@@ -9,6 +9,7 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
+Vue.prototype.$http = axios;
 
 import VueRouter from 'vue-router';
 import VueSocketio from 'vue-socket.io';
@@ -20,21 +21,24 @@ Vue.use(VueSocketio, 'http://192.168.10.1:8080');
 
 Vue.use(require('vue-moment'));
 
+const login = Vue.component('login', require('./components/login.vue'));
 const user = Vue.component('user', require('./components/user.vue'));
 
 const routes = [
-  { path: '/users', component: user }
+	{ path: '/', redirect: '/login' },
+	{ path: '/login', component: login },
+  	{ path: '/users', component: user }
 ];
 
 const router = new VueRouter({
-  routes:routes
+  	routes:routes
 });
 
 const app = new Vue({
-  router,
-  data:{
-    player1:undefined,
-    player2: undefined,
-  }
+	router,
+	data:{
+		player1:undefined,
+		player2: undefined,
+	}
 }).$mount('#app');
 

@@ -38,6 +38,15 @@ class UserControllerAPI extends Controller
         return response()->json(new UserResource($user), 201);
     }
 
+    public function getUserByNickname($nickname)
+    {
+        return UserResource::collection(User::where('nickname', $nickname)->get());
+    }
+    public function getUserByEmail($email)
+    {
+        return UserResource::collection(User::where('email', $email)->get());
+    }
+
     /*public function getUser($id)
     {
         return new UserResource(User::find($id));

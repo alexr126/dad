@@ -2,13 +2,13 @@
 	<div class="jumbotron">
 		<h2>Login</h2>
 		<div>
-			<form v-on:submit="handleLoginSubmit()">
+			<form v-on:submit.prevent="handleLoginSubmit()">
 				<div class="form-group">
 					<label for="inputName">Username</label>
 					<input
 			            type="text" class="form-control"
-			            name="email" id="inputName" 
-			            placeholder="Enter your e-mail or nickname" v-model="email"/>
+			            name="user" id="inputName" 
+			            placeholder="Enter your e-mail or nickname" v-model="user"/>
 				</div>
 				<div class="form-group">
 					<label for="inputPassword">Password</label>
@@ -22,6 +22,11 @@
 	    </div>
 		<button class="btn btn-default" v-on:click.prevent="register()">Register</button>
 		<registration v-if="registeringUser" :user='currentUser' @user-registred="handleRegisterSubmit" @cancel="cancel"></registration>
+		<br><br>
+		<div class="alert alert-danger" v-if="showSuccess">
+			<button type="button" class="close-btn" v-on:click="showSuccess=false">&times;</button>
+			<strong>{{ errorMessage }}</strong>
+		</div>
 	</div>
 </template>
 
@@ -30,15 +35,32 @@
 	export default{
 		data(){
 			return{
-				email: "",
+				user: "",
 				password: "",
 				currentUser: null,
-				registeringUser: false
+				registeringUser: false,
+				errorMessage: "",
+				showSuccess: false,
 			}
 		},
 	    methods: {
 	    	handleLoginSubmit: function(){
-	    		this.login(this.email, this.password);	    		
+	    		axios.get('api/users/nickname/'+this.user)
+    			.then(response=>{
+    				if(response.data.data.length == 0){
+    					axios.get('api/users/email/'+this.user)
+    						.then(response=>{
+    							if(response.data.data.length == 0){
+    								this.showSuccess = true;
+    								this.errorMessage = 'Credentials are wrong!'; 
+    							}else{
+    								this.login(this.user, this.password);
+    							}
+    						})
+    				}else{
+    					this.login(response.data.data[0].email, this.password);
+    				}
+    			})		
 	    	},
 	    	register: function(){
 	    		this.registeringUser = true;
@@ -53,7 +75,7 @@
 	    		//this.login
 	    	},
 	    	login: function(email, password){
-	    		this.$http.post('api/login', {email, password})
+	    		axios.post('api/login', {email, password})
 	    		.then(response=>{
 	    			console.log(response);
 	    		})

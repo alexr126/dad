@@ -23,6 +23,8 @@ Route::middleware('auth:api')->post('logout', 'LoginControllerAPI@logout');
 Route::get('users', 'UserControllerAPI@getUsers');
 Route::get('users/emailavailable', 'UserControllerAPI@emailAvailable');
 Route::get('users/{id}', 'UserControllerAPI@getUser');
+Route::get('users/nickname/{nickname}', 'UserControllerAPI@getUserByNickname');
+Route::get('users/email/{email}', 'UserControllerAPI@getUserByEmail');
 Route::post('users', 'UserControllerAPI@store');
 Route::put('users/{id}', 'UserControllerAPI@update');
 Route::delete('users/{id}', 'UserControllerAPI@delete');
