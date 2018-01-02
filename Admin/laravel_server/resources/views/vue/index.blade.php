@@ -3,11 +3,7 @@
 @section('title', 'Vue.js App')
 
 @section('content')
-    <router-link to="/users">Users</router-link> -
-    <router-link to="/singletictactoe">SinglePlayer TicTacToe</router-link> -
-    <router-link to="/multitictactoe">Multiplayer TicTacToe</router-link> -
-    <router-link to="/game">Memory Game</router-link>
-
+    <router-link to="/users">Users</router-link>
     <router-view></router-view>
 @endsection
 

@@ -18,21 +18,12 @@ Vue.use(VueRouter);
 //Vue.use(VueSocketio, 'http://192.168.10.10:8080');
 Vue.use(VueSocketio, 'http://192.168.10.1:8080');
 
-const login = Vue.component('login', require('./components/login.vue'));
+Vue.use(require('vue-moment'));
+
 const user = Vue.component('user', require('./components/user.vue'));
-const department = Vue.component('department', require('./components/departmentList.vue'));
-const singleplayer_game = Vue.component('singlegame', require('./components/singleplayer_tictactoe.vue'));
-const multiplayerGame = Vue.component('multiplayergame', require('./components/multiplayer_tictactoe.vue'));
-const game = Vue.component('game', require('./components/memory.vue'));
 
 const routes = [
-  { path: '/', redirect: '/login' },
-  { path: '/login', component: login },
-  { path: '/users', component: user },
-  { path: '/departments', component: department },
-  { path: '/singletictactoe', component: singleplayer_game },
-  { path: '/multitictactoe', component: multiplayerGame },
-  { path: '/game', component: game }
+  { path: '/users', component: user }
 ];
 
 const router = new VueRouter({
@@ -44,7 +35,6 @@ const app = new Vue({
   data:{
     player1:undefined,
     player2: undefined,
-    departments: [],
   }
 }).$mount('#app');
 

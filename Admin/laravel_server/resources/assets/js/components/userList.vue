@@ -16,20 +16,23 @@
 	        </tr>
 	    </thead>
 	    <tbody>
-	        <tr v-for="user in users"  :key="user.id" :class="{activerow: editingUser === user}">
+	        <tr v-for="user in users"  :key="user.id" :class="{activerow: editingUser === user, activerow: blockingUser === user}">
 	            <td>{{ user.id }}</td>
                 <td>{{ user.nickname }}</td>
                 <td>{{ user.name }}</td>
             	<td>{{ user.email }}</td>
             	<td>{{ user.admin }}</td>
-            	<td>{{ user.blocked }}</td>
+            	<td v-if="user.blocked">{{ "Yes" }}</td>
+                <td v-else>{{ "No" }}</td>
             	<td>{{ user.reason_blocked }}</td>
             	<td>{{ user.reason_reactivated }}</td>
-            	<td>{{ user.created_at }}</td>
-            	<td>{{ user.updated_at }}</td>
+            	<td>{{ user.created_at.date | moment("DD/MM/YYYY HH:mm") }}</td>
+            	<td>{{ user.updated_at.date | moment("DD/MM/YYYY HH:mm") }}</td>
 	            <td>
 	                <a class="btn btn-xs btn-primary" v-on:click.prevent="editUser(user)">Edit</a>
-	                <a class="btn btn-xs btn-danger" v-on:click.prevent="deleteUser(user)">Delete</a>
+	                <a v-if="user.blocked" class="btn btn-xs btn-primary" v-on:click.prevent="unblockUser(user)">Unblock</a>
+                    <a v-else class="btn btn-xs btn-danger" v-on:click.prevent="blockUser(user)">Block</a>
+                    <a class="btn btn-xs btn-danger" v-on:click.prevent="deleteUser(user)">Delete</a>
 	            </td>
 	        </tr>
 	    </tbody>
@@ -37,12 +40,13 @@
 </template>
 
 <script type="text/javascript">
-	// Component code (not registered)
+
 	module.exports={
 		props: ['users'],
 		data: function(){
 			return { 
-				editingUser: null
+				editingUser: null,
+                blockingUser: null,
 			}
 		},
         methods: {
@@ -50,6 +54,13 @@
                 this.editingUser = user;
                 this.$emit('edit-click', user);
             },		
+            blockUser: function(user) {
+                this.blockingUser = user;
+                this.$emit('block-click', user);
+            },
+            unblockUser: function(user) {
+                this.$emit('unblock-click', user);
+            },
             deleteUser: function(user){
                 this.editingUser = null;
                 this.$emit('delete-click', user);
