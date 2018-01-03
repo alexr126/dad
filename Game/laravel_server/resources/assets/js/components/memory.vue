@@ -18,7 +18,7 @@
 
             <div class="board">
                 <div v-for="(piece, key) of boardClass.board" >
-                    <img v-bind:src="pieceImageURL(key)" v-on:click="clickPiece(key)">
+                    <img v-bind:src="pieceImageURL(key)" v-on:click="clickPiece(piece)">
                 </div>
             </div>
             <hr>
@@ -39,7 +39,7 @@
                 currentValue: 1, //Current player playing. 
                 currentMove: 0,
                 gameEnded: false,
-                boardClass: new Board(2,2,4),
+                boardClass: new Board(2),
                 openValue: [], //Do the board with classes. There is only need for one board
                                // And, on the server, We should have the "boardDone" ready to go!
                 startGame: true, //Just for the start, to look pretty! (Will be needed, stay!)
@@ -47,32 +47,25 @@
         },
         methods: {
             pieceImageURL: function (key) { //To show the image on each square of the board.
-                /*if(piece == '0'){
-                    return 'img/' + 'hidden' + '.png';
-                }else{
-                    let imgSrc = String(piece);
-                    return 'img/' + imgSrc + '.png';       
-                }*/
                 return this.boardClass.board[key].imagePath();
-
             },
-            clickPiece: function(index) { //When a player clicks a piece.
+            clickPiece: function(piece) { //When a player clicks a piece.
                 //Validations on Console. Explore it!
-                console.log('Clicked on ' + index);
-                console.log(this.boardClass.board);
+                console.log('Clicked on ');
+                console.log(piece);
                 
                 //If the game already ended OR if the piece is already clicked/Opened, then do nothing.
-                if(!this.boardClass.board[index].isHidden || this.gameEnded || this.startGame) 
-                    return;
+                if(!piece.isHidden || this.gameEnded || this.startGame) return;
                 
-                this.boardClass.board[index].flip();
-                // this.boardClass.board[index].value = this.boardClass.board[index].trueValue;
+                piece.flip();
 
                 //This "openValue" is a way to see both clicked pieces. (Push adds a node)
-                this.openValue.push(this.boardClass.board[index]);
+                this.openValue.push(piece);
                 
                 //Counter, for the number of moves each player has.
                 this.currentMove++;
+
+                console.log(this.currentMove + "-- CurrentMove"); 
 
                 //If the player only played ONE piece, we need to let him play the other!
                 if(this.currentMove == 2){
@@ -80,6 +73,7 @@
                     //We need to check now if there is 2 equal pieces.
                     this.checkValuesAreEqual();
                     
+                    console.log("checked if values are equal.");
                     //Lets restart the counter!
                     this.currentMove = 0;
 
@@ -90,7 +84,16 @@
                     if(this.isBoardComplete()){
                         this.gameEnded = true;
                         this.showSuccess = true;
-                        this.successMessage = 'Check who won.' //Seriously, check who won! Should be done on server, by having 2 arrays or smth! Do it Z 
+                        let winner = 0;
+                        let winnerName = 0; //this is a number now.
+                        this.boardClass.playersHash.forEach(function (item, key, mapObj){
+                            if(winner < item[1]){
+                                winner = item[1];
+                                winnerName = item[0];
+                            }        
+                        });
+                        console.log("DONEEEEEEEEEEEEEEEEEEEEEEEEEEee");
+                        this.successMessage = "Winner is " + winnerName + " With " + winner;
                     }
                 }else{
                     //Nothing happens! The current player can play another piece!
@@ -98,7 +101,8 @@
             },
             restartGame:function(){ // We are restarting the game. We are sorting the current array, like the teacher said: "Com Randoms, façam um re-order do array. Apanhem 2 posições, e troquem uma com a outra". 
                 console.log('restartGame / startGame');
-                this.boardClass = new Board(2);               
+                this.boardClass = new Board(2, 4, 4); //Board : NumberOfPlayers, XAxis and YAxis
+                console.log(this.boardClass)              
                 this.showSuccess = false;
                 this.showFailure = false;
                 this.successMessage = '';
@@ -107,7 +111,7 @@
                 this.gameEnded = false;
                 this.startGame = false;
             },
-            checkValuesAreEqual:function(){ //Checking if both pieces are equal. No need to validation, since this function is only called IF there are 2 numbers on "OpenValue"
+            checkValuesAreEqual: function(){ //Checking if both pieces are equal. No need to validation, since this function is only called IF there are 2 numbers on "OpenValue"
                 console.log("Checking if Pieces are equal.");
                 if(this.openValue[0].trueValue == this.openValue[1].trueValue){ //They are equal
                     console.log("they are equal");
@@ -115,11 +119,29 @@
                     //Object.assign(this.boardBefore, this.board);
                     
                     //console.log(this.boardBefore);
-                    console.log(this.boardClass.board);
+                    console.log(this.boardClass);
                     
+                    //Lets set the playersHash. Set receives the index , and then the value to change.
+                    let arrayAux = new Array();
+                    arrayAux.push(this.boardClass.playersHash.get(this.currentValue - 1)[0]); //Lets add the Name
+                    arrayAux.push(this.boardClass.playersHash.get(this.currentValue - 1)[1] + 1); //Lets add the Result
+
+                    this.boardClass.playersHash.set(this.currentValue - 1, arrayAux);
+
                     //The player need to play again!
                     this.successMessage = 'Player '+ this.currentValue +' has Played. Play again!';
                     this.showSuccess = true;
+
+                    //If its the bots turn, then play again. (player 2)
+                    if(this.currentValue == 2){
+                        //Lets restart the counter!
+                        this.currentMove = 0;
+
+                        //Reset the array!
+                        this.openValue = [];
+
+                        this.playBot(4);
+                    }
 
                 }else{ //If they aren't, we need to re-change to the original Board!
                     //Timeout first..
@@ -136,9 +158,21 @@
                     this.successMessage = 'Player '+ this.currentValue +' has Played';
                     this.showSuccess = true;
                     this.currentValue = (this.currentValue == 1)? 2 : 1; //Change player //Do :     this.currentValue%MAX_PLAYERS+1 
+                    
+                    if(this.currentValue == 2){
+                        console.log("Execute the bot.");
+                        
+                        //Lets restart the counter!
+                        this.currentMove = 0;
+
+                        //Reset the array!
+                        this.openValue = [];
+                        this.playBot(4);
+                        
+                    }
                 }
             },
-            isBoardComplete:function(){ //Checking if the board is completely "Open".
+            isBoardComplete: function(){ //Checking if the board is completely "Open".
                 let returnValue = true;
                 this.boardClass.board.forEach(function(element) {
                     if (element.isHidden == true) {
@@ -149,6 +183,189 @@
                 });
                 console.log(returnValue);
                 return returnValue;
+            },
+            playBot: function(dificulty){
+                switch(dificulty){
+                    case 1:
+                        this.playBotDificultyOne();
+                        break;
+                    case 2:
+                        this.playBotDificultyTwo();
+                        break;
+                    case 3:
+                        this.playBotDificultyThree();
+                        break;
+                    case 4:
+                        this.playBotDificultyFour();
+                        break;
+                    default:
+                        break;     
+                }
+            },
+            playBotDificultyOne: function(){
+                let playOne, playTwo;
+                let boardArray = new Array();
+                for(let i = 0; i < this.boardClass.board.length; i++){
+                    if(this.boardClass.board[i].isHidden) boardArray.push(this.boardClass.board[i]);
+                }
+                do{
+                    playOne = Math.floor(Math.random() * boardArray.length);
+                    playTwo = Math.floor(Math.random() * boardArray.length);
+                }while(playOne == playTwo || !boardArray[playOne].isHidden || !boardArray[playTwo].isHidden);
+                this.clickPiece(boardArray[playOne]);
+                this.clickPiece(boardArray[playTwo]);
+            },
+            playBotDificultyTwo: function(){
+                let playOne, playTwo;
+                let boardArray = new Array();
+                let boardOpenArray = new Array();
+                for(let i = 0; i < this.boardClass.board.length; i++){
+                    if(this.boardClass.board[i].isHidden) boardArray.push(this.boardClass.board[i]); 
+                }
+                if(boardArray.length == 0) return;
+                if(boardArray.length == 2){
+                    this.clickPiece(boardArray[0]);
+                    this.clickPiece(boardArray[1]);
+                    return;
+                }
+
+                console.log(boardArray);
+                for(let i = 0; i < boardArray.length; i++){
+                    if(boardArray[i].wasOpen) boardOpenArray.push(boardArray[i]);
+                }
+                console.log(boardOpenArray);
+                if(boardOpenArray.length > 1){
+                    for(let i = 0; i < boardOpenArray.length; i++){
+                        for(let j = i + 1; j < boardOpenArray.length; j++){
+                            if(boardOpenArray[i].trueValue == boardOpenArray[j].trueValue){
+                                //Means that there is two pieces that were once opend and they have equal trueValue
+                                this.clickPiece(boardOpenArray[i]);
+                                this.clickPiece(boardOpenArray[j]);
+                                console.log("there is 2 pieces.");
+                                return;
+                            }
+                        }
+                    }
+                }//This means that we don't have enough pieces that were found To combine.
+                console.log("Randomize.");
+                do{
+                    playOne = Math.floor(Math.random() * boardArray.length);
+                    playTwo = Math.floor(Math.random() * boardArray.length);
+                }while(playOne == playTwo || !boardArray[playOne].isHidden || !boardArray[playTwo].isHidden);
+                this.clickPiece(boardArray[playOne]);
+                this.clickPiece(boardArray[playTwo]);
+            },
+            playBotDificultyThree: function(){
+                let playOne, playTwo;
+                let boardArray = new Array();
+                let boardOpenArray = new Array();
+                for(let i = 0; i < this.boardClass.board.length; i++){
+                    if(this.boardClass.board[i].isHidden) boardArray.push(this.boardClass.board[i]); 
+                }
+                if(boardArray.length == 0) return;
+                if(boardArray.length == 2){
+                    this.clickPiece(boardArray[0]);
+                    this.clickPiece(boardArray[1]);
+                    return;
+                }
+
+                console.log(boardArray);
+                for(let i = 0; i < boardArray.length; i++){
+                    if(boardArray[i].wasOpen) boardOpenArray.push(boardArray[i]);
+                }
+                console.log(boardOpenArray);
+                if(boardOpenArray.length > 1){
+                    for(let i = 0; i < boardOpenArray.length; i++){
+                        for(let j = i + 1; j < boardOpenArray.length; j++){
+                            if(boardOpenArray[i].trueValue == boardOpenArray[j].trueValue){
+                                //Means that there is two pieces that were once opend and they have equal trueValue
+                                this.clickPiece(boardOpenArray[i]);
+                                this.clickPiece(boardOpenArray[j]);
+                                console.log("there is 2 pieces.");
+                                return;
+                            }
+                        }
+                    }
+                }//This means that we don't have enough pieces that were found To combine.
+                 //We do a first piece... and pray To god. xD
+                do{
+                    playOne = Math.floor(Math.random() * boardArray.length);
+                }while(!boardArray[playOne].isHidden);
+                this.clickPiece(boardArray[playOne]);
+
+                for(let i = 0; i < boardOpenArray.length; i++){
+                    if(boardArray[playOne].trueValue == boardOpenArray[i].trueValue && boardArray[playOne] != boardOpenArray[i]){
+                        //If there is opend piece with the same value, then pick it as well.
+                        this.clickPiece(boardOpenArray[i]);
+                        console.log("There is 1 piece.");
+                        return;
+                    }
+                }
+
+                //There isnt any piece? Ok... randomize.
+                do{
+                    playTwo = Math.floor(Math.random() * boardArray.length);
+                }while(!boardArray[playTwo].isHidden || playOne == playTwo);
+                this.clickPiece(boardArray[playTwo]);
+                console.log("Random");
+                return;
+            },
+            playBotDificultyFour: function(){
+                let playOne, playTwo;
+                let boardArray = new Array();
+                let boardOpenArray = new Array();
+                let boardNotPlayed = new Array();
+                for(let i = 0; i < this.boardClass.board.length; i++){
+                    if(this.boardClass.board[i].isHidden) boardArray.push(this.boardClass.board[i]); 
+                }
+                if(boardArray.length == 0) return;
+                if(boardArray.length == 2){
+                    this.clickPiece(boardArray[0]);
+                    this.clickPiece(boardArray[1]);
+                    return;
+                }
+
+                console.log(boardArray);
+                for(let i = 0; i < boardArray.length; i++){
+                    if(boardArray[i].wasOpen) boardOpenArray.push(boardArray[i]);
+                    else boardNotPlayed.push(boardArray[i]);
+                }
+                console.log(boardOpenArray);
+                if(boardOpenArray.length > 1){
+                    for(let i = 0; i < boardOpenArray.length; i++){
+                        for(let j = i + 1; j < boardOpenArray.length; j++){
+                            if(boardOpenArray[i].trueValue == boardOpenArray[j].trueValue){
+                                //Means that there is two pieces that were once opend and they have equal trueValue
+                                this.clickPiece(boardOpenArray[i]);
+                                this.clickPiece(boardOpenArray[j]);
+                                console.log("there is 2 pieces.");
+                                return;
+                            }
+                        }
+                    }
+                }//This means that we don't have enough pieces that were found To combine.
+                 //We do a first piece... and pray To god. xD
+                do{
+                    playOne = Math.floor(Math.random() * boardNotPlayed.length);
+                }while(!boardNotPlayed[playOne].isHidden);
+                this.clickPiece(boardNotPlayed[playOne]);
+
+                for(let i = 0; i < boardOpenArray.length; i++){
+                    if(boardNotPlayed[playOne].trueValue == boardOpenArray[i].trueValue && boardNotPlayed[playOne] != boardOpenArray[i]){
+                        //If there is opend piece with the same value, then pick it as well.
+                        this.clickPiece(boardOpenArray[i]);
+                        console.log("There is 1 piece.");
+                        return;
+                    }
+                }
+
+                //There isnt any piece? Ok... randomize.
+                do{
+                    playTwo = Math.floor(Math.random() * boardNotPlayed.length);
+                }while(!boardNotPlayed[playTwo].isHidden || playOne == playTwo);
+                this.clickPiece(boardNotPlayed[playTwo]);
+                console.log("Random");
+                return;
             }
         },
         computed:{
@@ -162,39 +379,55 @@
     }
 
     class Board{
-        constructor(numberOfPlayersOrXAxis, yAxis, size){ // https://stackoverflow.com/questions/3220721/javascript-pattern-for-multiple-constructors
-        console.log("Entered on Board.");
-        if (yAxis===undefined){ // We don't want to go for custom board!
-            this.constructWithNumberOfPlayers(numberOfPlayersOrXAxis);
-        }else{
-            this.constructWithXAxisAndYAxis(numberOfPlayersOrXAxis, yAxis, size);            
+        constructor(numberOfPlayers, xAxis, yAxis){ // https://stackoverflow.com/questions/3220721/javascript-pattern-for-multiple-constructors
+            this.board = [];
+            this.numberOfPlayers = numberOfPlayers;
+            this.playersHash = new Map();
+
+            let arr = new Array();
+            for(let i = 0; i < numberOfPlayers ; i++){
+                arr.push("Player " + (i+1));
+                arr.push(0);
+                this.playersHash.set(i, arr);
+                arr = new Array();
+            }
+
+            console.log("Entered on Board.");
+            if (xAxis===undefined){ // We don't want to go for custom board!
+                this._constructWithNumberOfPlayers(numberOfPlayers);
+            }else{
+                this._constructWithXAxisAndYAxis(numberOfPlayers, xAxis, yAxis);            
             }
         }
 
-        constructWithNumberOfPlayers(numberOfPlayers){
-            this.board = [];
-            this.numberOfPlayers = numberOfPlayers;
-
+        _constructWithNumberOfPlayers(numberOfPlayers){
             console.log(this.numberOfPlayers);
             if (this.numberOfPlayers == 1 || this.numberOfPlayers == 2){
                 //Board needs to be 4x4
-                this.board = this.createBoard(4, 4, 16);
+                this.board = this.createBoard(4, 4);
             } else if(this.numberOfPlayers == 3){
                 //Board needs to be 4*6
-                this.board = this.createBoard(4, 6, 24);
+                this.board = this.createBoard(4, 6);
             } else if(this.numberOfPlayers == 4){
                 //Board needs to be 6*6
-                this.board = this.createBoard(6, 6, 36);
+                this.board = this.createBoard(6, 6);
             }else{
                 return;
             }
         }
 
-        constructWithXAxisAndYAxis(xAxis, yAxis, size){
-            this.board = this.createBoard(this.xAxis, this.yAxis, size);
+        _constructWithXAxisAndYAxis(numberOfPlayers, xAxis, yAxis){
+            if(xAxis*yAxis%2 == 0){
+                this.board = this.createBoard(xAxis, yAxis);
+            }else if(xAxis*yAxis > 80){
+                this.board = this.createBoard(8,10);
+            }else{
+                return; //Error
+            }
         }
         
-        createBoard(x, y, size){
+        createBoard(x, y){
+            let size = x*y;
             let board = new Array(size);
             //We have the board now. We need to populate it with the Pieces.
             let trueValue = 0;
@@ -204,7 +437,7 @@
                 counter++;
                 if(counter == 2) { counter=0; trueValue++; }
             }
-            for(let i = 0; i < 100 ; i++){
+            for(let i = 0; i < 250 ; i++){
                 let positionOne = Math.floor(Math.random() * (size - 0 + 1 - 1 )) + 0;
                 let positionTwo = Math.floor(Math.random() * (size - 0 + 1 - 1 )) + 0;
 
@@ -213,7 +446,6 @@
                 board[positionTwo] = temp;
             }
             console.log(board);
-            console.log(x + "__" + y + "__" + size + "!" );
             return board;
         }
     }
@@ -222,6 +454,7 @@
         constructor(trueValue){
             console.log("new Piece!");
             this.isHidden = true; //true = Hidden.
+            this.wasOpen = false; //If it was opened.
             this.trueValue = trueValue;
             this.pathHidden = 'img/' + 'hidden' + '.png';
             this.pathFlip = 'img/' + String(this.trueValue) + '.png';
@@ -234,7 +467,9 @@
         }
         flip(){
             this.isHidden = !this.isHidden;
+            this.wasOpen = true;
         }
+
     }
 </script>
 
