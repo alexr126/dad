@@ -4,18 +4,11 @@
 
 @section('content')
     <router-link to="/users">Users</router-link> -
-    <router-link to="/singletictactoe">SinglePlayer TicTacToe</router-link> -
-    <router-link to="/multitictactoe">Multiplayer TicTacToe</router-link> -
-    <router-link to="/game">Memory Game</router-link>
-
-    <router-view></router-view>
+    <router-link to="/singlememory">SinglePlayer Memory Game</router-link> -
+    <router-link to="/multimemory">Multiplayer Memory Game</router-link> -
+    <router-link to="/game">Memory Game</router-link> <!-- TESTS -->
 @endsection
 
 @section('pagescript')
 <script src="js/vueapp.js"></script>
-
-<!-- <script src="/js/manifest.js"></script>
-<script src="/js/vendor.js"></script>
-<script src="/js/vueapp.js"></script>
- -->
- @stop  
+@stop  

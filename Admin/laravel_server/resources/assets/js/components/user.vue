@@ -94,7 +94,7 @@
 	    },
 	    mounted() {
 			this.getUsers();
-			if (this.$root.departments.length === 0) {
+			/*if (this.$root.departments.length === 0) {
 				axios.get('api/departments')
   					.then(response=>{
   						this.$root.departments = response.data.data; 
@@ -102,7 +102,7 @@
   					})
   			} else {
   				this.departments = this.$root.departments;
-  			}
+  			}*/
 		}
 
 	}

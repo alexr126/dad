@@ -63001,17 +63001,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 		'user-reason-blocked': __WEBPACK_IMPORTED_MODULE_2__userReasonBlocked_vue___default.a
 	},
 	mounted: function mounted() {
-		var _this3 = this;
-
 		this.getUsers();
-		if (this.$root.departments.length === 0) {
-			axios.get('api/departments').then(function (response) {
-				_this3.$root.departments = response.data.data;
-				_this3.departments = _this3.$root.departments;
-			});
-		} else {
-			this.departments = this.$root.departments;
-		}
+		/*if (this.$root.departments.length === 0) {
+  	axios.get('api/departments')
+  				.then(response=>{
+  					this.$root.departments = response.data.data; 
+  					this.departments = this.$root.departments;
+  				})
+  		} else {
+  			this.departments = this.$root.departments;
+  		}*/
 	}
 });
 
@@ -63428,7 +63427,7 @@ exports = module.exports = __webpack_require__(2)(undefined);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -63475,9 +63474,18 @@ exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 module.exports = {
-    props: ['user', 'departments'],
+    //props: ['user', 'departments'],
+    props: ['user'],
     methods: {
         saveUser: function saveUser() {
             var _this = this;
@@ -63576,76 +63584,34 @@ var render = function() {
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "form-group" }, [
-      _c("label", { attrs: { for: "inputAge" } }, [_vm._v("Age")]),
+      _c("label", { attrs: { for: "inputNickname" } }, [_vm._v("Email")]),
       _vm._v(" "),
       _c("input", {
         directives: [
           {
             name: "model",
             rawName: "v-model",
-            value: _vm.user.age,
-            expression: "user.age"
+            value: _vm.user.nickname,
+            expression: "user.nickname"
           }
         ],
         staticClass: "form-control",
         attrs: {
-          type: "number",
-          name: "age",
-          id: "inputAge",
-          placeholder: "Age"
+          type: "text",
+          name: "nickname",
+          id: "inputNickname",
+          placeholder: "Nickname"
         },
-        domProps: { value: _vm.user.age },
+        domProps: { value: _vm.user.nickname },
         on: {
           input: function($event) {
             if ($event.target.composing) {
               return
             }
-            _vm.$set(_vm.user, "age", $event.target.value)
+            _vm.$set(_vm.user, "nickname", $event.target.value)
           }
         }
       })
-    ]),
-    _vm._v(" "),
-    _c("div", { staticClass: "form-group" }, [
-      _c("label", { attrs: { for: "department_id" } }, [_vm._v("Department:")]),
-      _vm._v(" "),
-      _c(
-        "select",
-        {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.user.department_id,
-              expression: "user.department_id"
-            }
-          ],
-          staticClass: "form-control",
-          attrs: { id: "department_id", name: "department_id" },
-          on: {
-            change: function($event) {
-              var $$selectedVal = Array.prototype.filter
-                .call($event.target.options, function(o) {
-                  return o.selected
-                })
-                .map(function(o) {
-                  var val = "_value" in o ? o._value : o.value
-                  return val
-                })
-              _vm.$set(
-                _vm.user,
-                "department_id",
-                $event.target.multiple ? $$selectedVal : $$selectedVal[0]
-              )
-            }
-          }
-        },
-        _vm._l(_vm.departments, function(department) {
-          return _c("option", { domProps: { value: department.id } }, [
-            _vm._v(" " + _vm._s(department.name) + " ")
-          ])
-        })
-      )
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "form-group" }, [

@@ -21,7 +21,7 @@
 
 <script type="text/javascript">
     import Lobby from './lobby.vue';
-    import GameTicTocToe from './game-tictactoe.vue';
+    import GameTicTocToe from './game-memory.vue';
 
 	export default {
         data: function(){

@@ -16,6 +16,14 @@
 	            placeholder="Email address"/>
 	    </div>
 	    <div class="form-group">
+	        <label for="inputNickname">Email</label>
+	        <input
+	            type="text" class="form-control" v-model="user.nickname"
+	            name="nickname" id="inputNickname"
+	            placeholder="Nickname"/>
+	    </div>
+        <!--
+	    <div class="form-group">
 	        <label for="inputAge">Age</label>
 	        <input
 	            type="number" class="form-control" v-model="user.age"
@@ -28,7 +36,7 @@
 	            <option v-for="department in departments" v-bind:value="department.id"> {{ department.name }} </option>
 	        </select>
 	    </div>
-
+		-->
 	    <div class="form-group">
 	        <a class="btn btn-default" v-on:click.prevent="saveUser()">Save</a>
 	        <a class="btn btn-default" v-on:click.prevent="cancelEdit()">Cancel</a>
@@ -38,7 +46,8 @@
 
 <script type="text/javascript">
 	module.exports={
-		props: ['user', 'departments'],
+		//props: ['user', 'departments'],
+		props: ['user'],
 	    methods: {
 	        saveUser: function(){
 	            axios.put('api/users/'+this.user.id, this.user)

@@ -21,20 +21,19 @@ Vue.use(VueSocketio, 'http://192.168.10.1:8080');
 
 const login = Vue.component('login', require('./components/login.vue'));
 const user = Vue.component('user', require('./components/user.vue'));
-const department = Vue.component('department', require('./components/departmentList.vue'));
-const singleplayer_game = Vue.component('singlegame', require('./components/singleplayer_tictactoe.vue'));
-const multiplayerGame = Vue.component('multiplayergame', require('./components/multiplayer_tictactoe.vue'));
+const singleplayer_game = Vue.component('singlegame', require('./components/singleplayer_memory.vue'));
+const multiplayer_game = Vue.component('multiplayergame', require('./components/multiplayer_memory.vue'));
 const game = Vue.component('game', require('./components/memory.vue'));
 
 const routes = [
   { path: '/', redirect: '/login' },
   { path: '/login', component: login },
   { path: '/users', component: user },
-  { path: '/departments', component: department },
-  { path: '/singletictactoe', component: singleplayer_game },
-  { path: '/multitictactoe', component: multiplayerGame },
-  { path: '/game', component: game }
+  { path: '/singlememory', component: singleplayer_game },
+  { path: '/multimemory', component: multiplayer_game },
+  { path: '/game', component: game } //tests
 ];
+
 
 const router = new VueRouter({
   routes:routes
