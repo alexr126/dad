@@ -11,7 +11,7 @@
 	    </div>
 
 	    <div class="form-group">
-	        <a class="btn btn-default" v-on:click.prevent="saveUser()">Save</a>
+	        <a class="btn btn-default" v-on:click.prevent="blockUser()">Block</a>
 	        <a class="btn btn-default" v-on:click.prevent="cancelOperation()">Cancel</a>
 	    </div>
 	</div>
@@ -21,20 +21,17 @@
 	module.exports={
 		props: ['user'],
 	    methods: {
-	        saveUser: function(){
-	            axios.put('api/users/'+this.user.id, this.user)
+	        blockUser: function(){
+	        	this.user.blocked = 1;
+	            axios.put('api/users/block/'+this.user.id, this.user)
 	                .then(response=>{
-	                	// Copy object properties from response.data.data to this.user
-	                	// without creating a new reference
 	                	Object.assign(this.user, response.data.data);
-	                	this.$emit('user-saved', this.user)
+	                	this.$emit('user-blocked', this.user)
 	                });
 	        },
-	        cancelEdit: function(){
+	        cancelOperation: function(){
 	        	axios.get('api/users/'+this.user.id)
 	                .then(response=>{
-	                	// Copy object properties from response.data.data to this.user
-	                	// without creating a new reference
 	                	Object.assign(this.user, response.data.data);
 	                	this.$emit('user-canceled', this.user);
 	                });

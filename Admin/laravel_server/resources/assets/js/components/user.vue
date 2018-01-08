@@ -4,20 +4,20 @@
 			<h1>{{ title }}</h1>
 		</div>
 
-		<user-list :users="users" @edit-click="editUser" @block-click="blockUser" @unblock-click ="unblockUser" @delete-click="deleteUser" @message="childMessage" ref="usersListRef"></user-list>
+		<user-list :users="users" @block-click="blockUser" @unblock-click ="unblockUser" @delete-click="deleteUser" @message="childMessage" 
+		ref="usersListRef"></user-list>
 
 		<div class="alert alert-success" v-if="showSuccess">			 
 			<button type="button" class="close-btn" v-on:click="showSuccess=false">&times;</button>
 			<strong>{{ successMessage }}</strong>
 		</div>
 
-		<user-reason-blocked :user="currentUser" @user-saved="saveUser" @user-canceled="cancelOperation" v-if="currentUser"></user-reason-blocked>		
+		<user-reason-blocked :user="currentUser" @user-blocked="saveUser" @user-canceled="cancelOperation" v-if="currentUser"></user-reason-blocked>		
 	</div>				
 </template>
 
 <script type="text/javascript">
 	import UserList from './userList.vue';
-	import UserEdit from './userEdit.vue';
 	import UserReasonBlocked from './userReasonBlocked.vue';
 	
 	export default {
@@ -31,14 +31,9 @@
 			}
 		},
 	    methods: {
-	        editUser: function(user){
-	            this.currentUser = user;
-	            this.showSuccess = false;
-	        },
 	        blockUser: function(user){
 	        	this.currentUser = user;
-	        	console.log(this.$refs.usersListRef.editingUser);
-	        	console.log(this.$refs.usersListRef.blockingUser);
+	        	this.showSuccess = false;
 	        },
 	        unblockUser: function(user){
 	        	user.blocked = 0;
@@ -52,31 +47,19 @@
 	                });
 	        },
 	        saveUser: function(){
-	        	if(this.$refs.usersListRef.editingUser != null){
-	        		this.currentUser = null;
-	            	this.$refs.usersListRef.editingUser = null;
-	            	this.showSuccess = true;
-	            	this.successMessage = 'User Saved';
-	        	} else {
-	        		if(this.$refs.usersListRef.blockingUser != null){
-	        			this.currentUser.blocked = 1;
-						this.currentUser = null;
-	            		this.$refs.usersListRef.blockingUser = null;
-	            		this.showSuccess = true;
-	            		this.successMessage = 'User Saved';
-	        		}
-	        	}	            
+        		if(this.$refs.usersListRef.blockingUser != null){
+					this.currentUser = null;
+            		this.$refs.usersListRef.blockingUser = null;
+            		this.showSuccess = true;
+            		this.successMessage = 'User Blocked';
+        		}	        		            
 	        },
 	        cancelOperation: function(){
 	            this.currentUser = null;	            
 	            this.showSuccess = false;
-	            if(this.$refs.usersListRef.editingUser){
-	            	this.$refs.usersListRef.editingUser = null;
-	            } else {
-	            	if(this.$refs.usersListRef.blockingUser){
-	            		this.$refs.usersListRef.blockingUser = null;
-	            	}
-	            }
+            	if(this.$refs.usersListRef.blockingUser){
+            		this.$refs.usersListRef.blockingUser = null;
+            	}	            
 	        },
 	        getUsers: function(){
 	            axios.get('api/users')
@@ -89,7 +72,6 @@
 	    },
 	    components: {
 	    	'user-list': UserList,
-	    	'user-edit': UserEdit,
 	    	'user-reason-blocked': UserReasonBlocked
 	    },
 	    mounted() {

@@ -16,7 +16,7 @@
 	        </tr>
 	    </thead>
 	    <tbody>
-	        <tr v-for="user in users"  :key="user.id" :class="{activerow: editingUser === user, activerow: blockingUser === user}">
+	        <tr v-for="user in users"  :key="user.id" :class="{activerow: blockingUser === user}">
 	            <td>{{ user.id }}</td>
                 <td>{{ user.nickname }}</td>
                 <td>{{ user.name }}</td>
@@ -29,7 +29,6 @@
             	<td>{{ user.created_at.date | moment("DD/MM/YYYY HH:mm") }}</td>
             	<td>{{ user.updated_at.date | moment("DD/MM/YYYY HH:mm") }}</td>
 	            <td>
-	                <a class="btn btn-xs btn-primary" v-on:click.prevent="editUser(user)">Edit</a>
 	                <a v-if="user.blocked" class="btn btn-xs btn-primary" v-on:click.prevent="unblockUser(user)">Unblock</a>
                     <a v-else class="btn btn-xs btn-danger" v-on:click.prevent="blockUser(user)">Block</a>
                     <a class="btn btn-xs btn-danger" v-on:click.prevent="deleteUser(user)">Delete</a>
@@ -45,15 +44,10 @@
 		props: ['users'],
 		data: function(){
 			return { 
-				editingUser: null,
                 blockingUser: null,
 			}
 		},
-        methods: {
-            editUser: function(user){
-                this.editingUser = user;
-                this.$emit('edit-click', user);
-            },		
+        methods: {	
             blockUser: function(user) {
                 this.blockingUser = user;
                 this.$emit('block-click', user);
@@ -62,7 +56,7 @@
                 this.$emit('unblock-click', user);
             },
             deleteUser: function(user){
-                this.editingUser = null;
+                this.blockingUser = null;
                 this.$emit('delete-click', user);
 			}
         },		

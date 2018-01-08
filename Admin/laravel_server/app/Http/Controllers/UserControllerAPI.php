@@ -63,6 +63,27 @@ class UserControllerAPI extends Controller
         $user->update($request->all());
         return new UserResource($user);
     }
+*/
+    public function block(Request $request, $id)
+    {
+        $request->validate([
+                'reason_blocked' => 'required'
+            ]);
+        $user = User::findOrFail($id);
+        $user->update($request->all());
+        return new UserResource($user);
+    }
+
+    public function unblock(Request $request, $id)
+    {
+        $request->validate([
+                'reason_reactivated' => 'required'
+            ]);
+        $user = User::findOrFail($id);
+        $user->blocked = 0;
+        $user->update($request->all());
+        return new UserResource($user);
+    }
 
     public function delete($id)
     {
@@ -70,6 +91,7 @@ class UserControllerAPI extends Controller
         $user->delete();
         return response()->json(null, 204);
     }
+ /*   
     public function emailAvailable(Request $request)
     {
         $totalEmail = 1;
@@ -79,5 +101,6 @@ class UserControllerAPI extends Controller
             $totalEmail = DB::table('users')->where('email', '=', $request->email)->count();
         }
         return response()->json($totalEmail == 0);
-    }*/
+    }
+*/
 }
