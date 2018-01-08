@@ -20,7 +20,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('login', 'LoginControllerAPI@login');
 Route::middleware('auth:api')->post('logout', 'LoginControllerAPI@logout');
 //Users
-Route::middleware('auth:api')->get('users', 'UserControllerAPI@getUsers');
+Route::get('users', 'UserControllerAPI@getUsers');
 Route::middleware('auth:api')->get('users/emailavailable', 'UserControllerAPI@emailAvailable');
 Route::middleware('auth:api')->get('users/{id}', 'UserControllerAPI@getUser');
 Route::middleware('auth:api')->post('users', 'UserControllerAPI@store');

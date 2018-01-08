@@ -32,6 +32,7 @@
 	import UserReasonRemoved from './userReasonRemoved.vue';
 	
 	export default {
+		props: ['userToken'],	
 		data: function(){
 			return { 
 		        title: 'List Users',
@@ -93,7 +94,9 @@
             	}        
 	        },
 	        getUsers: function(){
-	            axios.get('api/users')
+
+	        	console.log("ghkjlkçl-----------------",this.userToken);
+	            axios.get('api/users', {headers : {Authorization: 'Bearer'.concat(this.userToken) } })
 	                .then(response=>{this.users = response.data.data; });
 			},
 			childMessage: function(message){

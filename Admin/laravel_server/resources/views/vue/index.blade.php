@@ -3,9 +3,7 @@
 @section('title', 'Memory Game Admin')
 
 @section('content')
-    <div v-if="isAuth">
-        <router-link to="/users">Users</router-link>
-    </div>
+    <router-link to="/users">Users</router-link>
     <router-view></router-view>
 @endsection
 

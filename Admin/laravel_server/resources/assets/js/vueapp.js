@@ -39,6 +39,6 @@ const app = new Vue({
 	data:{
 		player1:undefined,
 		player2: undefined,
-		isAuth: false,
-	}
+		userToken: undefined		
+	},
 }).$mount('#app');
