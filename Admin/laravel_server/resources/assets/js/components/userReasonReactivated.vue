@@ -1,17 +1,17 @@
 <template>
 	<div class="jumbotron">
-	    <h2>Blocking Reason</h2>
+	    <h2>Reactivation Reason</h2>
 
 	    <div class="form-group">
-	        <label for="inputReasonBlocked"></label>
+	        <label for="inputReasonReactivated"></label>
 	        <input
-	            type="text" class="form-control" v-model="user.reason_blocked"
-	            name="name" id="inputReasonBlocked" 
-	            placeholder="ReasonBlocked"/>
+	            type="text" class="form-control" v-model="user.reason_reactivated"
+	            name="name" id="inputReasonReactivated" 
+	            placeholder="ReasonReactivated"/>
 	    </div>
 
 	    <div class="form-group">
-	        <a class="btn btn-default" v-on:click.prevent="blockUser()">Block</a>
+	        <a class="btn btn-default" v-on:click.prevent="unblockUser()">Unblock</a>
 	        <a class="btn btn-default" v-on:click.prevent="cancelOperation()">Cancel</a>
 	    </div>
 	</div>
@@ -21,13 +21,13 @@
 	module.exports={
 		props: ['user'],
 	    methods: {
-	        blockUser: function(){
-	        	this.user.blocked = 1;
-	        	this.user.reason_reactivated = null;
-	            axios.put('api/users/block/'+this.user.id, this.user)
+	        unblockUser: function(){
+	        	this.user.blocked = 0;
+	        	this.user.reason_blocked = null;
+	            axios.put('api/users/unblock/'+this.user.id, this.user)
 	                .then(response=>{
 	                	Object.assign(this.user, response.data.data);
-	                	this.$emit('user-blocked', this.user)
+	                	this.$emit('user-unblocked', this.user)
 	                });
 	        },
 	        cancelOperation: function(){

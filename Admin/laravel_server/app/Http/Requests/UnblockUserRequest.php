@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateUserRequest extends FormRequest
+class UnblockUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +24,7 @@ class UpdateUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:255',
-            'nickname' => 'required|unique:users,nickname'.$this->user->id, //////
-            'email' => 'required|email|unique:users,email,'.$this->user->id,
-            'password' => 'nullable|string|min:6|confirmed',
+            'reason_reactivated' => 'required|string|max:255'
         ];
     }
 }

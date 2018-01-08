@@ -4,21 +4,32 @@
 			<h1>{{ title }}</h1>
 		</div>
 
-		<user-list :users="users" @edit-click="editUser" @block-click="blockUser" @unblock-click ="unblockUser" @delete-click="deleteUser" @message="childMessage" ref="usersListRef"></user-list>
+		<user-list :users="users" @block-click="blockUser" @unblock-click ="unblockUser" @delete-click="deleteUser" @message="childMessage" 
+			ref="usersListRef">
+		</user-list>
 
 		<div class="alert alert-success" v-if="showSuccess">			 
 			<button type="button" class="close-btn" v-on:click="showSuccess=false">&times;</button>
 			<strong>{{ successMessage }}</strong>
 		</div>
 
-		<user-reason-blocked :user="currentUser" @user-saved="saveUser" @user-canceled="cancelOperation" v-if="currentUser"></user-reason-blocked>		
+		<user-reason-blocked :user="currentUser_toBlock" @user-blocked="saveUser" @user-canceled="cancelOperation" v-if="currentUser_toBlock">
+		</user-reason-blocked>	
+
+		<user-reason-reactivated :user="currentUser_toUnblock" @user-unblocked="saveUser" @user-canceled="cancelOperation" 
+			v-if="currentUser_toUnblock">			
+		</user-reason-reactivated>	
+
+		<user-reason-removed :user="currentUser_toRemove" @user-removed="saveUser" @user-canceled="cancelOperation" v-if="currentUser_toRemove">
+		</user-reason-removed>
 	</div>				
 </template>
 
 <script type="text/javascript">
 	import UserList from './userList.vue';
-	import UserEdit from './userEdit.vue';
 	import UserReasonBlocked from './userReasonBlocked.vue';
+	import UserReasonReactivated from './userReasonReactivated.vue';
+	import UserReasonRemoved from './userReasonRemoved.vue';
 	
 	export default {
 		data: function(){
@@ -26,57 +37,60 @@
 		        title: 'List Users',
 		        showSuccess: false,
 		        successMessage: '',
-		        currentUser: null,
+		        currentUser_toBlock: null,
+		        currentUser_toUnblock: null,
+		        currentUser_toRemove: null,
 		        users: []
 			}
 		},
 	    methods: {
-	        editUser: function(user){
-	            this.currentUser = user;
-	            this.showSuccess = false;
-	        },
 	        blockUser: function(user){
-	        	this.currentUser = user;
-	        	console.log(this.$refs.usersListRef.editingUser);
-	        	console.log(this.$refs.usersListRef.blockingUser);
+	        	this.currentUser_toBlock = user;
+	        	this.showSuccess = false;
 	        },
 	        unblockUser: function(user){
-	        	user.blocked = 0;
+	        	this.currentUser_toUnblock = user;
+	        	this.showSuccess = false;
 	        },
 	        deleteUser: function(user){
-	            axios.delete('api/users/'+user.id)
-	                .then(response => {
-	                    this.showSuccess = true;
-	                    this.successMessage = 'User Deleted';
-	                    this.getUsers();
-	                });
+	            this.currentUser_toRemove = user;
+	        	this.showSuccess = false;
 	        },
 	        saveUser: function(){
-	        	if(this.$refs.usersListRef.editingUser != null){
-	        		this.currentUser = null;
-	            	this.$refs.usersListRef.editingUser = null;
-	            	this.showSuccess = true;
-	            	this.successMessage = 'User Saved';
-	        	} else {
-	        		if(this.$refs.usersListRef.blockingUser != null){
-	        			this.currentUser.blocked = 1;
-						this.currentUser = null;
-	            		this.$refs.usersListRef.blockingUser = null;
-	            		this.showSuccess = true;
-	            		this.successMessage = 'User Saved';
-	        		}
-	        	}	            
+        		if(this.$refs.usersListRef.blockingUser != null){
+					this.currentUser_toBlock = null;
+            		this.$refs.usersListRef.blockingUser = null;
+            		this.showSuccess = true;
+            		this.successMessage = 'User Blocked';
+        		}	 
+        		if(this.$refs.usersListRef.unblockingUser != null){
+					this.currentUser_toUnblock = null;
+            		this.$refs.usersListRef.unblockingUser = null;
+            		this.showSuccess = true;
+            		this.successMessage = 'User Unblocked';
+        		}       	
+        		if(this.$refs.usersListRef.removingUser != null){
+					this.currentUser_toRemove = null;
+            		this.$refs.usersListRef.removingUser = null;
+            		this.showSuccess = true;
+            		this.successMessage = 'User Removed';
+            		this.getUsers();
+        		}	            
 	        },
-	        cancelOperation: function(){
-	            this.currentUser = null;	            
+	        cancelOperation: function(){	            
 	            this.showSuccess = false;
-	            if(this.$refs.usersListRef.editingUser){
-	            	this.$refs.usersListRef.editingUser = null;
-	            } else {
-	            	if(this.$refs.usersListRef.blockingUser){
-	            		this.$refs.usersListRef.blockingUser = null;
-	            	}
-	            }
+            	if(this.$refs.usersListRef.blockingUser){
+            		this.$refs.usersListRef.blockingUser = null;
+            		this.currentUser_toBlock = null;
+            	}	  
+            	if(this.$refs.usersListRef.unblockingUser){
+            		this.$refs.usersListRef.unblockingUser = null;
+            		this.currentUser_toUnblock = null;
+            	}  
+            	if(this.$refs.usersListRef.removingUser){
+            		this.$refs.usersListRef.removingUser = null;
+            		this.currentUser_toRemove = null;
+            	}        
 	        },
 	        getUsers: function(){
 	            axios.get('api/users')
@@ -89,8 +103,9 @@
 	    },
 	    components: {
 	    	'user-list': UserList,
-	    	'user-edit': UserEdit,
-	    	'user-reason-blocked': UserReasonBlocked
+	    	'user-reason-blocked': UserReasonBlocked,
+	    	'user-reason-reactivated': UserReasonReactivated,
+	    	'user-reason-removed': UserReasonRemoved
 	    },
 	    mounted() {
 			this.getUsers();
