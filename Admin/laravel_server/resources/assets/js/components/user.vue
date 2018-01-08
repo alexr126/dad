@@ -5,18 +5,23 @@
 		</div>
 
 		<user-list :users="users" @block-click="blockUser" @unblock-click ="unblockUser" @delete-click="deleteUser" @message="childMessage" 
-		ref="usersListRef"></user-list>
+			ref="usersListRef">
+		</user-list>
 
 		<div class="alert alert-success" v-if="showSuccess">			 
 			<button type="button" class="close-btn" v-on:click="showSuccess=false">&times;</button>
 			<strong>{{ successMessage }}</strong>
 		</div>
 
-		<user-reason-blocked :user="currentUser" @user-blocked="saveUser" @user-canceled="cancelOperation" v-if="currentUser"></user-reason-blocked>	
+		<user-reason-blocked :user="currentUser_toBlock" @user-blocked="saveUser" @user-canceled="cancelOperation" v-if="currentUser_toBlock">
+		</user-reason-blocked>	
 
-		<user-reason-reactivated :user="currentUser" @user-unblocked="saveUser" @user-canceled="cancelOperation" v-if="currentUser"></user-reason-reactivated>	
+		<user-reason-reactivated :user="currentUser_toUnblock" @user-unblocked="saveUser" @user-canceled="cancelOperation" 
+			v-if="currentUser_toUnblock">			
+		</user-reason-reactivated>	
 
-		<user-reason-removed :user="currentUser" @user-removed="saveUser" @user-canceled="cancelOperation" v-if="currentUser"></user-reason-removed>
+		<user-reason-removed :user="currentUser_toRemove" @user-removed="saveUser" @user-canceled="cancelOperation" v-if="currentUser_toRemove">
+		</user-reason-removed>
 	</div>				
 </template>
 
@@ -32,55 +37,59 @@
 		        title: 'List Users',
 		        showSuccess: false,
 		        successMessage: '',
-		        currentUser: null,
+		        currentUser_toBlock: null,
+		        currentUser_toUnblock: null,
+		        currentUser_toRemove: null,
 		        users: []
 			}
 		},
 	    methods: {
 	        blockUser: function(user){
-	        	this.currentUser = user;
+	        	this.currentUser_toBlock = user;
 	        	this.showSuccess = false;
 	        },
 	        unblockUser: function(user){
-	        	this.currentUser = user;
+	        	this.currentUser_toUnblock = user;
 	        	this.showSuccess = false;
 	        },
 	        deleteUser: function(user){
-	            this.currentUser = user;
+	            this.currentUser_toRemove = user;
 	        	this.showSuccess = false;
 	        },
 	        saveUser: function(){
         		if(this.$refs.usersListRef.blockingUser != null){
-					this.currentUser = null;
+					this.currentUser_toBlock = null;
             		this.$refs.usersListRef.blockingUser = null;
             		this.showSuccess = true;
             		this.successMessage = 'User Blocked';
         		}	 
         		if(this.$refs.usersListRef.unblockingUser != null){
-					this.currentUser = null;
+					this.currentUser_toUnblock = null;
             		this.$refs.usersListRef.unblockingUser = null;
             		this.showSuccess = true;
             		this.successMessage = 'User Unblocked';
         		}       	
         		if(this.$refs.usersListRef.removingUser != null){
-					this.currentUser = null;
+					this.currentUser_toRemove = null;
             		this.$refs.usersListRef.removingUser = null;
             		this.showSuccess = true;
             		this.successMessage = 'User Removed';
             		this.getUsers();
         		}	            
 	        },
-	        cancelOperation: function(){
-	            this.currentUser = null;	            
+	        cancelOperation: function(){	            
 	            this.showSuccess = false;
             	if(this.$refs.usersListRef.blockingUser){
             		this.$refs.usersListRef.blockingUser = null;
+            		this.currentUser_toBlock = null;
             	}	  
             	if(this.$refs.usersListRef.unblockingUser){
             		this.$refs.usersListRef.unblockingUser = null;
+            		this.currentUser_toUnblock = null;
             	}  
             	if(this.$refs.usersListRef.removingUser){
             		this.$refs.usersListRef.removingUser = null;
+            		this.currentUser_toRemove = null;
             	}        
 	        },
 	        getUsers: function(){

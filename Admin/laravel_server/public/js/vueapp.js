@@ -62680,6 +62680,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -62692,38 +62697,40 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 			title: 'List Users',
 			showSuccess: false,
 			successMessage: '',
-			currentUser: null,
+			currentUser_toBlock: null,
+			currentUser_toUnblock: null,
+			currentUser_toRemove: null,
 			users: []
 		};
 	},
 	methods: {
 		blockUser: function blockUser(user) {
-			this.currentUser = user;
+			this.currentUser_toBlock = user;
 			this.showSuccess = false;
 		},
 		unblockUser: function unblockUser(user) {
-			this.currentUser = user;
+			this.currentUser_toUnblock = user;
 			this.showSuccess = false;
 		},
 		deleteUser: function deleteUser(user) {
-			this.currentUser = user;
+			this.currentUser_toRemove = user;
 			this.showSuccess = false;
 		},
 		saveUser: function saveUser() {
 			if (this.$refs.usersListRef.blockingUser != null) {
-				this.currentUser = null;
+				this.currentUser_toBlock = null;
 				this.$refs.usersListRef.blockingUser = null;
 				this.showSuccess = true;
 				this.successMessage = 'User Blocked';
 			}
 			if (this.$refs.usersListRef.unblockingUser != null) {
-				this.currentUser = null;
+				this.currentUser_toUnblock = null;
 				this.$refs.usersListRef.unblockingUser = null;
 				this.showSuccess = true;
 				this.successMessage = 'User Unblocked';
 			}
 			if (this.$refs.usersListRef.removingUser != null) {
-				this.currentUser = null;
+				this.currentUser_toRemove = null;
 				this.$refs.usersListRef.removingUser = null;
 				this.showSuccess = true;
 				this.successMessage = 'User Removed';
@@ -62731,16 +62738,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 			}
 		},
 		cancelOperation: function cancelOperation() {
-			this.currentUser = null;
 			this.showSuccess = false;
 			if (this.$refs.usersListRef.blockingUser) {
 				this.$refs.usersListRef.blockingUser = null;
+				this.currentUser_toBlock = null;
 			}
 			if (this.$refs.usersListRef.unblockingUser) {
 				this.$refs.usersListRef.unblockingUser = null;
+				this.currentUser_toUnblock = null;
 			}
 			if (this.$refs.usersListRef.removingUser) {
 				this.$refs.usersListRef.removingUser = null;
+				this.currentUser_toRemove = null;
 			}
 		},
 		getUsers: function getUsers() {
@@ -63364,9 +63373,9 @@ var render = function() {
           ])
         : _vm._e(),
       _vm._v(" "),
-      _vm.currentUser
+      _vm.currentUser_toBlock
         ? _c("user-reason-blocked", {
-            attrs: { user: _vm.currentUser },
+            attrs: { user: _vm.currentUser_toBlock },
             on: {
               "user-blocked": _vm.saveUser,
               "user-canceled": _vm.cancelOperation
@@ -63374,9 +63383,9 @@ var render = function() {
           })
         : _vm._e(),
       _vm._v(" "),
-      _vm.currentUser
+      _vm.currentUser_toUnblock
         ? _c("user-reason-reactivated", {
-            attrs: { user: _vm.currentUser },
+            attrs: { user: _vm.currentUser_toUnblock },
             on: {
               "user-unblocked": _vm.saveUser,
               "user-canceled": _vm.cancelOperation
@@ -63384,9 +63393,9 @@ var render = function() {
           })
         : _vm._e(),
       _vm._v(" "),
-      _vm.currentUser
+      _vm.currentUser_toRemove
         ? _c("user-reason-removed", {
-            attrs: { user: _vm.currentUser },
+            attrs: { user: _vm.currentUser_toRemove },
             on: {
               "user-removed": _vm.saveUser,
               "user-canceled": _vm.cancelOperation
