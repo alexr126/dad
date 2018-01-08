@@ -16,7 +16,7 @@
 		            name="password" id="inputPassword" 
 		            placeholder="Enter your password" v-model="password"/>
 			</div>
-		    <button class="btn btn-default" v-on:click.prevent="LoginSubmit()">Login</button>
+		    <button class="btn btn-default" v-on:click.prevent="login()">Login</button>
 		    <br><br>
 		    <div class="alert alert-danger" v-if="showSuccess">
 				<button type="button" class="close-btn" v-on:click="showSuccess=false">&times;</button>
@@ -35,43 +35,20 @@
 				password: "",
 				errorMessage: "",
 				showSuccess: false,
+				isAuth: false,
 			}
 		},
 	    methods: {
-	    	LoginSubmit: function(){
-	    		axios.get('api/users/nickname/'+this.user)
-    			.then(response=>{
-    				if(response.data.data.length == 0){
-    					axios.get('api/users/email/'+this.user)
-    						.then(response=>{
-    							if(response.data.data.length == 0){
-    								this.showSuccess = true;
-    								this.errorMessage = 'Credentials are wrong!'; 
-    							}else{
-    								if(response.data.data[0].admin == 1){
-    									this.login(this.user, this.password);
-    								}
-    								else{
-			    						this.showSuccess = true;
-										this.errorMessage = 'This is restricted area. Only Administrators are allowed!';
-									} 
-			    				}
-    						})
-    				}else{
-    					if(response.data.data[0].admin == 1){
-    						this.login(response.data.data[0].email, this.password);
-    					}else{
-    						this.showSuccess = true;
-							this.errorMessage = 'This is restricted area. Only Administrators are allowed!'; 
-    					}
-    				}
-    			})
-
-	    	},
-	    	login: function(email, password){
-	    		axios.post('api/login', {email, password})
+	    	login: function(){
+	    		axios.post('api/login', {
+	    			email: this.email,
+	    			password: this.password
+				})
 	    		.then(response=>{
-	    			console.log(response);
+	    			this.$router.push({path: "/users"});
+
+	    		}).catch(error =>{
+	    			console.log(error);
 	    		})
 	    	}
 	    },

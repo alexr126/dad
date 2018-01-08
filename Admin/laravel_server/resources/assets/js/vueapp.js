@@ -9,7 +9,7 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
-Vue.prototype.$http = axios;
+//Vue.prototype.$http = axios;
 
 import VueRouter from 'vue-router';
 import VueSocketio from 'vue-socket.io';
@@ -17,7 +17,7 @@ import VueSocketio from 'vue-socket.io';
 Vue.use(VueRouter);
 
 //Vue.use(VueSocketio, 'http://192.168.10.10:8080');
-Vue.use(VueSocketio, 'http://192.168.10.1:8080');
+//Vue.use(VueSocketio, 'http://192.168.10.1:8080');
 
 Vue.use(require('vue-moment'));
 
@@ -39,6 +39,6 @@ const app = new Vue({
 	data:{
 		player1:undefined,
 		player2: undefined,
+		isAuth: false,
 	}
 }).$mount('#app');
-

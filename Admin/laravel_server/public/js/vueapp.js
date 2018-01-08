@@ -17629,7 +17629,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 __webpack_require__(135);
 
 window.Vue = __webpack_require__(158);
-Vue.prototype.$http = axios;
+//Vue.prototype.$http = axios;
 
 
 
@@ -17637,7 +17637,7 @@ Vue.prototype.$http = axios;
 Vue.use(__WEBPACK_IMPORTED_MODULE_0_vue_router__["a" /* default */]);
 
 //Vue.use(VueSocketio, 'http://192.168.10.10:8080');
-Vue.use(__WEBPACK_IMPORTED_MODULE_1_vue_socket_io___default.a, 'http://192.168.10.1:8080');
+//Vue.use(VueSocketio, 'http://192.168.10.1:8080');
 
 Vue.use(__webpack_require__(163));
 
@@ -17654,7 +17654,8 @@ var app = new Vue({
 	router: router,
 	data: {
 		player1: undefined,
-		player2: undefined
+		player2: undefined,
+		isAuth: false
 	}
 }).$mount('#app');
 
@@ -62554,7 +62555,7 @@ exports = module.exports = __webpack_require__(2)(undefined);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -62628,51 +62629,31 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-	data: function data() {
-		return {
-			user: "",
-			email: "",
-			password: "",
-			errorMessage: "",
-			showSuccess: false
-		};
-	},
+  data: function data() {
+    return {
+      user: "",
+      email: "",
+      password: "",
+      errorMessage: "",
+      showSuccess: false,
+      isAuth: false
+    };
+  },
 
-	methods: {
-		LoginSubmit: function LoginSubmit() {
-			var _this = this;
+  methods: {
+    login: function login() {
+      var _this = this;
 
-			axios.get('api/users/nickname/' + this.user).then(function (response) {
-				if (response.data.data.length == 0) {
-					axios.get('api/users/email/' + _this.user).then(function (response) {
-						if (response.data.data.length == 0) {
-							_this.showSuccess = true;
-							_this.errorMessage = 'Credentials are wrong!';
-						} else {
-							if (response.data.data[0].admin == 1) {
-								_this.login(_this.user, _this.password);
-							} else {
-								_this.showSuccess = true;
-								_this.errorMessage = 'This is restricted area. Only Administrators are allowed!';
-							}
-						}
-					});
-				} else {
-					if (response.data.data[0].admin == 1) {
-						_this.login(response.data.data[0].email, _this.password);
-					} else {
-						_this.showSuccess = true;
-						_this.errorMessage = 'This is restricted area. Only Administrators are allowed!';
-					}
-				}
-			});
-		},
-		login: function login(email, password) {
-			axios.post('api/login', { email: email, password: password }).then(function (response) {
-				console.log(response);
-			});
-		}
-	}
+      axios.post('api/login', {
+        email: this.email,
+        password: this.password
+      }).then(function (response) {
+        _this.$router.push({ path: "/users" });
+      }).catch(function (error) {
+        console.log(error);
+      });
+    }
+  }
 
 });
 
@@ -62757,7 +62738,7 @@ var render = function() {
           on: {
             click: function($event) {
               $event.preventDefault()
-              _vm.LoginSubmit()
+              _vm.login()
             }
           }
         },

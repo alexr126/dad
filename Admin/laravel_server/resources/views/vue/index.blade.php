@@ -1,9 +1,11 @@
 @extends('master')
 
-@section('title', 'Vue.js App')
+@section('title', 'Memory Game Admin')
 
 @section('content')
-    <router-link to="/users">Users</router-link>
+    <div v-if="isAuth">
+        <router-link to="/users">Users</router-link>
+    </div>
     <router-view></router-view>
 @endsection
 

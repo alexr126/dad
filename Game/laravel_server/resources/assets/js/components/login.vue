@@ -71,13 +71,11 @@
 	    	handleRegisterSubmit: function(user){
 	    		this.currentUser = user;
 	    		this.login(user.email, user.password);
-
-	    		//this.login
 	    	},
 	    	login: function(email, password){
 	    		axios.post('api/login', {email, password})
 	    		.then(response=>{
-	    			console.log(response);
+	    			this.$router.push({path: "/users"});	    			
 	    		})
 	    	}
 	    },
