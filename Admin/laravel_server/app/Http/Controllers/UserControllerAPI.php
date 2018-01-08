@@ -80,7 +80,6 @@ class UserControllerAPI extends Controller
                 'reason_reactivated' => 'required'
             ]);
         $user = User::findOrFail($id);
-        $user->blocked = 0;
         $user->update($request->all());
         return new UserResource($user);
     }

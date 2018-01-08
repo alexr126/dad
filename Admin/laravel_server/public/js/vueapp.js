@@ -62654,6 +62654,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__userList_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__userList_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__userReasonBlocked_vue__ = __webpack_require__(185);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__userReasonBlocked_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__userReasonBlocked_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__userReasonReactivated_vue__ = __webpack_require__(200);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__userReasonReactivated_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__userReasonReactivated_vue__);
 //
 //
 //
@@ -62672,6 +62674,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+
 
 
 
@@ -62692,7 +62697,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 			this.showSuccess = false;
 		},
 		unblockUser: function unblockUser(user) {
-			user.blocked = 0;
+			this.currentUser = user;
+			this.showSuccess = false;
 		},
 		deleteUser: function deleteUser(user) {
 			var _this = this;
@@ -62710,12 +62716,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 				this.showSuccess = true;
 				this.successMessage = 'User Blocked';
 			}
+			if (this.$refs.usersListRef.unblockingUser != null) {
+				this.currentUser = null;
+				this.$refs.usersListRef.unblockingUser = null;
+				this.showSuccess = true;
+				this.successMessage = 'User Unblocked';
+			}
 		},
 		cancelOperation: function cancelOperation() {
 			this.currentUser = null;
 			this.showSuccess = false;
 			if (this.$refs.usersListRef.blockingUser) {
 				this.$refs.usersListRef.blockingUser = null;
+			}
+			if (this.$refs.usersListRef.unblockingUser) {
+				this.$refs.usersListRef.unblockingUser = null;
 			}
 		},
 		getUsers: function getUsers() {
@@ -62732,7 +62747,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 	},
 	components: {
 		'user-list': __WEBPACK_IMPORTED_MODULE_0__userList_vue___default.a,
-		'user-reason-blocked': __WEBPACK_IMPORTED_MODULE_1__userReasonBlocked_vue___default.a
+		'user-reason-blocked': __WEBPACK_IMPORTED_MODULE_1__userReasonBlocked_vue___default.a,
+		'user-reason-reactivated': __WEBPACK_IMPORTED_MODULE_2__userReasonReactivated_vue___default.a
 	},
 	mounted: function mounted() {
 		this.getUsers();
@@ -62890,7 +62906,8 @@ module.exports = {
     props: ['users'],
     data: function data() {
         return {
-            blockingUser: null
+            blockingUser: null,
+            unblockingUser: null
         };
     },
     methods: {
@@ -62899,10 +62916,12 @@ module.exports = {
             this.$emit('block-click', user);
         },
         unblockUser: function unblockUser(user) {
+            this.unblockingUser = user;
             this.$emit('unblock-click', user);
         },
         deleteUser: function deleteUser(user) {
             this.blockingUser = null;
+            this.unblockingUser = null;
             this.$emit('delete-click', user);
         }
     }
@@ -62924,7 +62943,13 @@ var render = function() {
       _vm._l(_vm.users, function(user) {
         return _c(
           "tr",
-          { key: user.id, class: { activerow: _vm.blockingUser === user } },
+          {
+            key: user.id,
+            class: {
+              activerow: _vm.blockingUser === user,
+              activerow: _vm.unblockingUser === user
+            }
+          },
           [
             _c("td", [_vm._v(_vm._s(user.id))]),
             _vm._v(" "),
@@ -63142,7 +63167,7 @@ exports = module.exports = __webpack_require__(2)(undefined);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -63178,6 +63203,7 @@ module.exports = {
             var _this = this;
 
             this.user.blocked = 1;
+            this.user.reason_reactivated = null;
             axios.put('api/users/block/' + this.user.id, this.user).then(function (response) {
                 Object.assign(_this.user, response.data.data);
                 _this.$emit('user-blocked', _this.user);
@@ -63331,6 +63357,16 @@ var render = function() {
               "user-canceled": _vm.cancelOperation
             }
           })
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.currentUser
+        ? _c("user-reason-reactivated", {
+            attrs: { user: _vm.currentUser },
+            on: {
+              "user-unblocked": _vm.saveUser,
+              "user-canceled": _vm.cancelOperation
+            }
+          })
         : _vm._e()
     ],
     1
@@ -63351,6 +63387,237 @@ if (false) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 192 */,
+/* 193 */,
+/* 194 */,
+/* 195 */,
+/* 196 */,
+/* 197 */,
+/* 198 */,
+/* 199 */,
+/* 200 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(201)
+}
+var normalizeComponent = __webpack_require__(4)
+/* script */
+var __vue_script__ = __webpack_require__(203)
+/* template */
+var __vue_template__ = __webpack_require__(204)
+/* template functional */
+  var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = "data-v-3dbcc8bc"
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources\\assets\\js\\components\\userReasonReactivated.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {  return key !== "default" && key.substr(0, 2) !== "__"})) {  console.error("named exports are not supported in *.vue files.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-3dbcc8bc", Component.options)
+  } else {
+    hotAPI.reload("data-v-3dbcc8bc", Component.options)
+' + '  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 201 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(202);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(3)("53625934", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-3dbcc8bc\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0&bustCache!./userReasonReactivated.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-3dbcc8bc\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0&bustCache!./userReasonReactivated.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 202 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(2)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 203 */
+/***/ (function(module, exports) {
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+module.exports = {
+    props: ['user'],
+    methods: {
+        unblockUser: function unblockUser() {
+            var _this = this;
+
+            this.user.blocked = 0;
+            this.user.reason_blocked = null;
+            axios.put('api/users/unblock/' + this.user.id, this.user).then(function (response) {
+                Object.assign(_this.user, response.data.data);
+                _this.$emit('user-unblocked', _this.user);
+            });
+        },
+        cancelOperation: function cancelOperation() {
+            var _this2 = this;
+
+            axios.get('api/users/' + this.user.id).then(function (response) {
+                Object.assign(_this2.user, response.data.data);
+                _this2.$emit('user-canceled', _this2.user);
+            });
+        }
+    }
+};
+
+/***/ }),
+/* 204 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "jumbotron" }, [
+    _c("h2", [_vm._v("Reactivation Reason")]),
+    _vm._v(" "),
+    _c("div", { staticClass: "form-group" }, [
+      _c("label", { attrs: { for: "inputReasonReactivated" } }),
+      _vm._v(" "),
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.user.reason_reactivated,
+            expression: "user.reason_reactivated"
+          }
+        ],
+        staticClass: "form-control",
+        attrs: {
+          type: "text",
+          name: "name",
+          id: "inputReasonReactivated",
+          placeholder: "ReasonReactivated"
+        },
+        domProps: { value: _vm.user.reason_reactivated },
+        on: {
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.$set(_vm.user, "reason_reactivated", $event.target.value)
+          }
+        }
+      })
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "form-group" }, [
+      _c(
+        "a",
+        {
+          staticClass: "btn btn-default",
+          on: {
+            click: function($event) {
+              $event.preventDefault()
+              _vm.unblockUser()
+            }
+          }
+        },
+        [_vm._v("Unblock")]
+      ),
+      _vm._v(" "),
+      _c(
+        "a",
+        {
+          staticClass: "btn btn-default",
+          on: {
+            click: function($event) {
+              $event.preventDefault()
+              _vm.cancelOperation()
+            }
+          }
+        },
+        [_vm._v("Cancel")]
+      )
+    ])
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-3dbcc8bc", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);

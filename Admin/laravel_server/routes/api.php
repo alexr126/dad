@@ -27,6 +27,7 @@ Route::get('users/nickname/{nickname}', 'UserControllerAPI@getUserByNickname');
 Route::get('users/email/{email}', 'UserControllerAPI@getUserByEmail');
 Route::post('users', 'UserControllerAPI@store');
 Route::put('users/block/{id}', 'UserControllerAPI@block');
+Route::put('users/unblock/{id}', 'UserControllerAPI@unblock');
 Route::delete('users/{id}', 'UserControllerAPI@delete');
 //Games
 Route::get('games', 'GameControllerAPI@index');

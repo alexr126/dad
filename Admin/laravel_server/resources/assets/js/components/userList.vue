@@ -16,7 +16,7 @@
 	        </tr>
 	    </thead>
 	    <tbody>
-	        <tr v-for="user in users"  :key="user.id" :class="{activerow: blockingUser === user}">
+	        <tr v-for="user in users"  :key="user.id" :class="{activerow: blockingUser === user, activerow: unblockingUser === user}">
 	            <td>{{ user.id }}</td>
                 <td>{{ user.nickname }}</td>
                 <td>{{ user.name }}</td>
@@ -45,6 +45,7 @@
 		data: function(){
 			return { 
                 blockingUser: null,
+                unblockingUser: null
 			}
 		},
         methods: {	
@@ -53,10 +54,12 @@
                 this.$emit('block-click', user);
             },
             unblockUser: function(user) {
+                this.unblockingUser = user;
                 this.$emit('unblock-click', user);
             },
             deleteUser: function(user){
                 this.blockingUser = null;
+                this.unblockingUser = null;
                 this.$emit('delete-click', user);
 			}
         },		
