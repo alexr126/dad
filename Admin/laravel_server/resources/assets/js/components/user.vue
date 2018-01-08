@@ -31,8 +31,7 @@
 	import UserReasonReactivated from './userReasonReactivated.vue';
 	import UserReasonRemoved from './userReasonRemoved.vue';
 	
-	export default {
-		props: ['userToken'],	
+	export default {	
 		data: function(){
 			return { 
 		        title: 'List Users',
@@ -41,7 +40,8 @@
 		        currentUser_toBlock: null,
 		        currentUser_toUnblock: null,
 		        currentUser_toRemove: null,
-		        users: []
+		        users: [],
+		        userToken: undefined
 			}
 		},
 	    methods: {
@@ -94,10 +94,14 @@
             	}        
 	        },
 	        getUsers: function(){
-
-	        	console.log("ghkjlkçl-----------------",this.userToken);
-	            axios.get('api/users', {headers : {Authorization: 'Bearer'.concat(this.userToken) } })
-	                .then(response=>{this.users = response.data.data; });
+	        	const auth = 'Bearer '+ this.userToken.replace(/"/g, ""); //regex para tirar "" do token
+	        	console.log(auth);
+	            axios.get('api/users', {headers: {Authorization: auth} })
+	                .then(response=>{
+	                	this.users = response.data.data; 
+	                }).catch(errors=>{
+	                	console.log(errors);
+	                });
 			},
 			childMessage: function(message){
 				this.showSuccess = true;
@@ -111,6 +115,7 @@
 	    	'user-reason-removed': UserReasonRemoved
 	    },
 	    mounted() {
+	    	this.userToken = localStorage.getItem('token');
 			this.getUsers();
 			/*if (this.$root.departments.length === 0) {
 				axios.get('api/departments')
