@@ -26,8 +26,8 @@ Route::middleware('auth:api')->get('users/{id}', 'UserControllerAPI@getUser');
 Route::middleware('auth:api')->post('users', 'UserControllerAPI@store');
 Route::middleware('auth:api')->put('users/{id}', 'UserControllerAPI@update');
 Route::middleware('auth:api')->delete('users/{id}', 'UserControllerAPI@delete');
-Route::put('users/block/{id}', 'UserControllerAPI@block');
-Route::put('users/unblock/{id}', 'UserControllerAPI@unblock');
+Route::middleware('auth:api')->put('users/block/{id}', 'UserControllerAPI@block');
+Route::middleware('auth:api')->put('users/unblock/{id}', 'UserControllerAPI@unblock');
 //Games
 Route::middleware('auth:api')->get('games', 'GameControllerAPI@index');
 Route::middleware('auth:api')->get('games/lobby', 'GameControllerAPI@lobby');
