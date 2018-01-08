@@ -15,6 +15,8 @@
 		<user-reason-blocked :user="currentUser" @user-blocked="saveUser" @user-canceled="cancelOperation" v-if="currentUser"></user-reason-blocked>	
 
 		<user-reason-reactivated :user="currentUser" @user-unblocked="saveUser" @user-canceled="cancelOperation" v-if="currentUser"></user-reason-reactivated>	
+
+		<user-reason-removed :user="currentUser" @user-removed="saveUser" @user-canceled="cancelOperation" v-if="currentUser"></user-reason-removed>
 	</div>				
 </template>
 
@@ -22,6 +24,7 @@
 	import UserList from './userList.vue';
 	import UserReasonBlocked from './userReasonBlocked.vue';
 	import UserReasonReactivated from './userReasonReactivated.vue';
+	import UserReasonRemoved from './userReasonRemoved.vue';
 	
 	export default {
 		data: function(){
@@ -43,12 +46,8 @@
 	        	this.showSuccess = false;
 	        },
 	        deleteUser: function(user){
-	            axios.delete('api/users/'+user.id)
-	                .then(response => {
-	                    this.showSuccess = true;
-	                    this.successMessage = 'User Deleted';
-	                    this.getUsers();
-	                });
+	            this.currentUser = user;
+	        	this.showSuccess = false;
 	        },
 	        saveUser: function(){
         		if(this.$refs.usersListRef.blockingUser != null){
@@ -62,7 +61,14 @@
             		this.$refs.usersListRef.unblockingUser = null;
             		this.showSuccess = true;
             		this.successMessage = 'User Unblocked';
-        		}       		            
+        		}       	
+        		if(this.$refs.usersListRef.removingUser != null){
+					this.currentUser = null;
+            		this.$refs.usersListRef.removingUser = null;
+            		this.showSuccess = true;
+            		this.successMessage = 'User Removed';
+            		this.getUsers();
+        		}	            
 	        },
 	        cancelOperation: function(){
 	            this.currentUser = null;	            
@@ -72,7 +78,10 @@
             	}	  
             	if(this.$refs.usersListRef.unblockingUser){
             		this.$refs.usersListRef.unblockingUser = null;
-            	}          
+            	}  
+            	if(this.$refs.usersListRef.removingUser){
+            		this.$refs.usersListRef.removingUser = null;
+            	}        
 	        },
 	        getUsers: function(){
 	            axios.get('api/users')
@@ -86,7 +95,8 @@
 	    components: {
 	    	'user-list': UserList,
 	    	'user-reason-blocked': UserReasonBlocked,
-	    	'user-reason-reactivated': UserReasonReactivated
+	    	'user-reason-reactivated': UserReasonReactivated,
+	    	'user-reason-removed': UserReasonRemoved
 	    },
 	    mounted() {
 			this.getUsers();

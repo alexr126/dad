@@ -62656,6 +62656,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__userReasonBlocked_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__userReasonBlocked_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__userReasonReactivated_vue__ = __webpack_require__(200);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__userReasonReactivated_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__userReasonReactivated_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__userReasonRemoved_vue__ = __webpack_require__(205);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__userReasonRemoved_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__userReasonRemoved_vue__);
 //
 //
 //
@@ -62676,6 +62678,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+
 
 
 
@@ -62701,13 +62706,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 			this.showSuccess = false;
 		},
 		deleteUser: function deleteUser(user) {
-			var _this = this;
-
-			axios.delete('api/users/' + user.id).then(function (response) {
-				_this.showSuccess = true;
-				_this.successMessage = 'User Deleted';
-				_this.getUsers();
-			});
+			this.currentUser = user;
+			this.showSuccess = false;
 		},
 		saveUser: function saveUser() {
 			if (this.$refs.usersListRef.blockingUser != null) {
@@ -62722,6 +62722,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 				this.showSuccess = true;
 				this.successMessage = 'User Unblocked';
 			}
+			if (this.$refs.usersListRef.removingUser != null) {
+				this.currentUser = null;
+				this.$refs.usersListRef.removingUser = null;
+				this.showSuccess = true;
+				this.successMessage = 'User Removed';
+				this.getUsers();
+			}
 		},
 		cancelOperation: function cancelOperation() {
 			this.currentUser = null;
@@ -62732,12 +62739,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 			if (this.$refs.usersListRef.unblockingUser) {
 				this.$refs.usersListRef.unblockingUser = null;
 			}
+			if (this.$refs.usersListRef.removingUser) {
+				this.$refs.usersListRef.removingUser = null;
+			}
 		},
 		getUsers: function getUsers() {
-			var _this2 = this;
+			var _this = this;
 
 			axios.get('api/users').then(function (response) {
-				_this2.users = response.data.data;
+				_this.users = response.data.data;
 			});
 		},
 		childMessage: function childMessage(message) {
@@ -62748,7 +62758,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 	components: {
 		'user-list': __WEBPACK_IMPORTED_MODULE_0__userList_vue___default.a,
 		'user-reason-blocked': __WEBPACK_IMPORTED_MODULE_1__userReasonBlocked_vue___default.a,
-		'user-reason-reactivated': __WEBPACK_IMPORTED_MODULE_2__userReasonReactivated_vue___default.a
+		'user-reason-reactivated': __WEBPACK_IMPORTED_MODULE_2__userReasonReactivated_vue___default.a,
+		'user-reason-removed': __WEBPACK_IMPORTED_MODULE_3__userReasonRemoved_vue___default.a
 	},
 	mounted: function mounted() {
 		this.getUsers();
@@ -62900,6 +62911,7 @@ exports.push([module.i, "\ntr.activerow[data-v-437a4046] {\n  \t\tbackground: #1
 //
 //
 //
+//
 
 
 module.exports = {
@@ -62907,7 +62919,8 @@ module.exports = {
     data: function data() {
         return {
             blockingUser: null,
-            unblockingUser: null
+            unblockingUser: null,
+            removingUser: null
         };
     },
     methods: {
@@ -62922,6 +62935,7 @@ module.exports = {
         deleteUser: function deleteUser(user) {
             this.blockingUser = null;
             this.unblockingUser = null;
+            this.removingUser = user;
             this.$emit('delete-click', user);
         }
     }
@@ -62947,7 +62961,8 @@ var render = function() {
             key: user.id,
             class: {
               activerow: _vm.blockingUser === user,
-              activerow: _vm.unblockingUser === user
+              activerow: _vm.unblockingUser === user,
+              activerow: _vm.removingUser === user
             }
           },
           [
@@ -63367,6 +63382,16 @@ var render = function() {
               "user-canceled": _vm.cancelOperation
             }
           })
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.currentUser
+        ? _c("user-reason-removed", {
+            attrs: { user: _vm.currentUser },
+            on: {
+              "user-removed": _vm.saveUser,
+              "user-canceled": _vm.cancelOperation
+            }
+          })
         : _vm._e()
     ],
     1
@@ -63616,6 +63641,223 @@ if (false) {
   module.hot.accept()
   if (module.hot.data) {
     require("vue-hot-reload-api")      .rerender("data-v-3dbcc8bc", module.exports)
+  }
+}
+
+/***/ }),
+/* 205 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(206)
+}
+var normalizeComponent = __webpack_require__(4)
+/* script */
+var __vue_script__ = __webpack_require__(208)
+/* template */
+var __vue_template__ = __webpack_require__(209)
+/* template functional */
+  var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = "data-v-e256d7f8"
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources\\assets\\js\\components\\userReasonRemoved.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {  return key !== "default" && key.substr(0, 2) !== "__"})) {  console.error("named exports are not supported in *.vue files.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-e256d7f8", Component.options)
+  } else {
+    hotAPI.reload("data-v-e256d7f8", Component.options)
+' + '  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 206 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(207);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(3)("66b2eaf2", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-e256d7f8\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0&bustCache!./userReasonRemoved.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-e256d7f8\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0&bustCache!./userReasonRemoved.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 207 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(2)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 208 */
+/***/ (function(module, exports) {
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+module.exports = {
+	props: ['user'],
+	methods: {
+		removeUser: function removeUser() {
+			var _this = this;
+
+			/*axios.delete('api/users/remove/'+user.id)
+       .then(response => {
+           this.showSuccess = true;
+           this.successMessage = 'User Deleted';
+           this.getUsers();
+       });*/
+			axios.delete('api/users/remove/' + this.user.id).then(function (response) {
+				Object.assign(_this.user, response.data.data);
+				_this.$emit('user-removed', _this.user);
+			});
+		},
+		cancelOperation: function cancelOperation() {
+			var _this2 = this;
+
+			axios.get('api/users/' + this.user.id).then(function (response) {
+				Object.assign(_this2.user, response.data.data);
+				_this2.$emit('user-canceled', _this2.user);
+			});
+		}
+	}
+};
+
+/***/ }),
+/* 209 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "jumbotron" }, [
+    _c("h2", [_vm._v("Removal Reason")]),
+    _vm._v(" "),
+    _vm._m(0),
+    _vm._v(" "),
+    _c("div", { staticClass: "form-group" }, [
+      _c(
+        "a",
+        {
+          staticClass: "btn btn-default",
+          on: {
+            click: function($event) {
+              $event.preventDefault()
+              _vm.removeUser()
+            }
+          }
+        },
+        [_vm._v("Remove")]
+      ),
+      _vm._v(" "),
+      _c(
+        "a",
+        {
+          staticClass: "btn btn-default",
+          on: {
+            click: function($event) {
+              $event.preventDefault()
+              _vm.cancelOperation()
+            }
+          }
+        },
+        [_vm._v("Cancel")]
+      )
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "form-group" }, [
+      _c("label", { attrs: { for: "inputReasonRemoved" } }),
+      _vm._v(" "),
+      _c("input", {
+        staticClass: "form-control",
+        attrs: {
+          type: "text",
+          name: "name",
+          id: "inputReasonRemoved",
+          placeholder: "ReasonRemoved"
+        }
+      })
+    ])
+  }
+]
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-e256d7f8", module.exports)
   }
 }
 
