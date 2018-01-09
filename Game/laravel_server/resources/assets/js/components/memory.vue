@@ -144,32 +144,35 @@
                     }
 
                 }else{ //If they aren't, we need to re-change to the original Board!
-                    //Timeout first..
-                    //sleep(1000); [SetTimeout(asd)! On Server] CleatTimeout check them all! ToDo:  
-                    console.log("They aren't equal.");
-                    
-                    // Object.assign(this.board, this.boardBefore);
-                    this.openValue[0].flip();
-                    this.openValue[1].flip();
 
-                    console.log(this.boardClass.board);
-                    
-                    //Lets change the player.
-                    this.successMessage = 'Player '+ this.currentValue +' has Played';
-                    this.showSuccess = true;
-                    this.currentValue = (this.currentValue == 1)? 2 : 1; //Change player //Do :     this.currentValue%MAX_PLAYERS+1 
-                    
-                    if(this.currentValue == 2){
-                        console.log("Execute the bot.");
+                    this.timer = setTimeout(() => {
+
+                        console.log("Inside Timeout -------------");
+
+                        this.clearTimer();
+
+                        this.openValue[0].flip();
+                        this.openValue[1].flip();
+
+                        console.log(this.boardClass.board);
+
+                        //Lets change the player.
+                        this.successMessage = 'Player '+ this.currentValue +' has Played';
+                        this.showSuccess = true;
+                        this.currentValue = (this.currentValue == 1)? 2 : 1; //Change player //Do :     this.currentValue%MAX_PLAYERS+1 
                         
+                        //Reset the array!
+                        console.log(' ----------- reset 3 ');
+                        this.openValue = [];
                         //Lets restart the counter!
                         this.currentMove = 0;
+                        if(this.currentValue == 2){
+                            console.log("Execute the bot.");
+                            
 
-                        //Reset the array!
-                        this.openValue = [];
-                        this.playBot(4);
-                        
-                    }
+                            this.playBot(4);
+                        }
+                    }, 500);
                 }
             },
             isBoardComplete: function(){ //Checking if the board is completely "Open".
