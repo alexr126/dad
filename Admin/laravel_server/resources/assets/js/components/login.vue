@@ -42,18 +42,17 @@
                 this.login(this.email, this.password);                
 			},
 	    	login: function(email, password){
-	    		console.log("-------------", email, password); 
                 axios.post('api/login', {email, password})
 	    		.then(response=>{
-	    			this.userToken = response.data.access_token;
+	    			localStorage.setItem('token', JSON.stringify(response.data.access_token));
 	    			this.$router.push({path: "/users"});
 	    		}).catch(error =>{
-	    			alert("Wrong user!");
+	    			this.showSuccess = true;
+	    			this.errorMessage = 'Credentials are wrong!';
 	    			console.log(error);
 	    		})
 	    	}
 	    },
-
 	}
 </script>
 
