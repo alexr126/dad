@@ -55,8 +55,14 @@
 	            this.showSuccess = false;
 	        },
 	        getUsers: function(){
-	            axios.get('api/users')
-	                .then(response=>{this.users = response.data.data; });
+	            const auth = 'Bearer '+ this.userToken.replace(/"/g, ""); //regex para tirar "" do token
+	        	console.log('USER: ', auth);
+	            axios.get('api/users', {headers: {Authorization: auth} })
+	                .then(response=>{
+	                	this.users = response.data.data; 
+	                }).catch(errors=>{
+	                	console.log(errors);
+	                });
 			},
 			childMessage: function(message){
 				this.showSuccess = true;

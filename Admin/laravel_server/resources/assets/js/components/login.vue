@@ -44,7 +44,7 @@
 	    	login: function(email, password){
                 axios.post('api/login', {email, password})
 	    		.then(response=>{
-	    			localStorage.setItem('token', JSON.stringify(response.data.access_token));
+	    			localStorage.setItem('token', response.data.access_token);
 	    			this.$router.push({path: "/users"});
 	    		}).catch(error =>{
 	    			this.showSuccess = true;
