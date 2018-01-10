@@ -115,7 +115,7 @@
 	    	'user-reason-removed': UserReasonRemoved
 	    },
 	    mounted() {
-	    	this.userToken = localStorage.getItem('token');
+	    	//this.userToken = localStorage.getItem('token');
 			this.getUsers();
 			/*if (this.$root.departments.length === 0) {
 				axios.get('api/departments')

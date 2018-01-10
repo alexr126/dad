@@ -62759,7 +62759,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 		'user-reason-removed': __WEBPACK_IMPORTED_MODULE_3__userReasonRemoved_vue___default.a
 	},
 	mounted: function mounted() {
-		this.userToken = localStorage.getItem('token');
+		//this.userToken = localStorage.getItem('token');
 		this.getUsers();
 		/*if (this.$root.departments.length === 0) {
   	axios.get('api/departments')

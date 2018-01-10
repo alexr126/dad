@@ -21,7 +21,6 @@ Route::post('login', 'LoginControllerAPI@login');
 Route::middleware('auth:api')->post('logout', 'LoginControllerAPI@logout');
 
 //Users
-<<<<<<< HEAD
 Route::middleware('auth:api')->get('users', 'UserControllerAPI@getUsers');
 Route::middleware('auth:api')->get('users/emailavailable', 'UserControllerAPI@emailAvailable');
 Route::middleware('auth:api')->get('users/{id}', 'UserControllerAPI@getUser');
@@ -30,16 +29,7 @@ Route::middleware('auth:api')->put('users/{id}', 'UserControllerAPI@update');
 Route::middleware('auth:api')->delete('users/{id}', 'UserControllerAPI@delete');
 Route::middleware('auth:api')->put('users/block/{id}', 'UserControllerAPI@block');
 Route::middleware('auth:api')->put('users/unblock/{id}', 'UserControllerAPI@unblock');
-=======
 Route::get('users', 'UserControllerAPI@getUsers');
-Route::get('users/emailavailable', 'UserControllerAPI@emailAvailable');
-Route::get('users/{id}', 'UserControllerAPI@getUser');
-Route::get('users/nickname/{nickname}', 'UserControllerAPI@getUserByNickname');
-Route::get('users/email/{email}', 'UserControllerAPI@getUserByEmail');
-Route::post('users', 'UserControllerAPI@store');
-Route::put('users/block/{id}', 'UserControllerAPI@block');
-Route::put('users/unblock/{id}', 'UserControllerAPI@unblock');
-Route::delete('users/remove/{id}', 'UserControllerAPI@delete');
 
 //Images
 Route::get('images', 'ImageControllerAPI@getImages');
@@ -47,7 +37,6 @@ Route::get('images/{id}', 'ImageControllerAPI@getImage');
 Route::post('images', 'ImageControllerAPI@store');
 Route::delete('images/remove/{id}', 'ImageControllerAPI@delete');
 
->>>>>>> -> Relatório na root do projeto para irmos preenchendo (é melhor ir começando porque não é pequeno)
 //Games
 Route::middleware('auth:api')->get('games', 'GameControllerAPI@index');
 Route::middleware('auth:api')->get('games/lobby', 'GameControllerAPI@lobby');
