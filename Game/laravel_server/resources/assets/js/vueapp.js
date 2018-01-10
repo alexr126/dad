@@ -13,6 +13,7 @@ Vue.prototype.$http = axios;
 
 import VueRouter from 'vue-router';
 import VueSocketio from 'vue-socket.io';
+import Auth from './packages/auth/Auth.js';
 
 Vue.use(VueRouter);
 
