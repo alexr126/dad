@@ -3,32 +3,30 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Contracts\Support\Jsonable;
+//use Illuminate\Contracts\Support\Jsonable;
 
-use App\Http\Resources\User as UserResource;
+use App\Http\Resources\Image as ImageResource;
 use Illuminate\Support\Facades\DB;
 
-use App\User;
-use App\StoreUserRequest;
-use Hash;
+use App\Image;
 
-class UserControllerAPI extends Controller
+class ImageControllerAPI extends Controller
 {
-    public function getUsers(Request $request)
+    public function getImages(Request $request)
     {
         if ($request->has('page')) {
-            return UserResource::collection(User::paginate(5));
+            return ImageResource::collection(Image::paginate(5));
         } else {
-            return UserResource::collection(User::all());
+            return ImageResource::collection(Image::all());
         }
     }
 
-    public function getUser($id)
+    public function getImage($id)
     {
-        return new UserResource(User::find($id));
+        return new ImageResource(Image::find($id));
     }
-
-/*  public function store(Request $request)
+/*
+    public function store(Request $request)
     {
         $request->validate([
                 'name' => 'required',
@@ -55,33 +53,13 @@ class UserControllerAPI extends Controller
         return new UserResource($user);
     }
 */
-    public function block(Request $request, $id)
-    {
-        $request->validate([
-                'reason_blocked' => 'required'
-            ]);
-        $user = User::findOrFail($id);
-        $user->update($request->all());
-        return new UserResource($user);
-    }
-
-    public function unblock(Request $request, $id)
-    {
-        $request->validate([
-                'reason_reactivated' => 'required'
-            ]);
-        $user = User::findOrFail($id);
-        $user->update($request->all());
-        return new UserResource($user);
-    }
-
     public function delete($id)
     {
         $user = User::findOrFail($id);
         $user->delete();
         return response()->json(null, 204);
     }
- /*   
+ /* 
     public function emailAvailable(Request $request)
     {
         $totalEmail = 1;

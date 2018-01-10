@@ -22,7 +22,8 @@
                 <td>{{ user.nickname }}</td>
                 <td>{{ user.name }}</td>
             	<td>{{ user.email }}</td>
-            	<td>{{ user.admin }}</td>
+            	<td v-if="user.admin">{{ "Yes" }}</td>
+                <td v-else>{{ "No" }}</td>
             	<td v-if="user.blocked">{{ "Yes" }}</td>
                 <td v-else>{{ "No" }}</td>
             	<td>{{ user.reason_blocked }}</td>

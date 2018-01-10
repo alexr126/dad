@@ -19,6 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 //Login
 Route::post('login', 'LoginControllerAPI@login');
 Route::middleware('auth:api')->post('logout', 'LoginControllerAPI@logout');
+
 //Users
 Route::middleware('auth:api')->get('users', 'UserControllerAPI@getUsers');
 Route::middleware('auth:api')->get('users/emailavailable', 'UserControllerAPI@emailAvailable');
@@ -28,6 +29,14 @@ Route::middleware('auth:api')->put('users/{id}', 'UserControllerAPI@update');
 Route::middleware('auth:api')->delete('users/{id}', 'UserControllerAPI@delete');
 Route::middleware('auth:api')->put('users/block/{id}', 'UserControllerAPI@block');
 Route::middleware('auth:api')->put('users/unblock/{id}', 'UserControllerAPI@unblock');
+Route::get('users', 'UserControllerAPI@getUsers');
+
+//Images
+Route::get('images', 'ImageControllerAPI@getImages');
+Route::get('images/{id}', 'ImageControllerAPI@getImage');
+Route::post('images', 'ImageControllerAPI@store');
+Route::delete('images/remove/{id}', 'ImageControllerAPI@delete');
+
 //Games
 Route::middleware('auth:api')->get('games', 'GameControllerAPI@index');
 Route::middleware('auth:api')->get('games/lobby', 'GameControllerAPI@lobby');
