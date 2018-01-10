@@ -19,7 +19,7 @@ var app = require('http').createServer();
 
 var io = require('socket.io')(app);
 
-var TicTacToeGame = require('./gamemodel.js');
+var MemoryGame = require('./gamemodel.js');
 var GameList = require('./gamelist.js');
 
 app.listen(8080, function(){
@@ -36,62 +36,66 @@ io.on('connection', function (socket) {
     console.log('client has connected');
 
     socket.on('create_game', function (data){
-    	let game = games.createGame(data.playerName, socket.id);
+    	let game = games.createGame(socket.id, data.playerName, data.numberPlayer, data.XAxis, data.YAxis);
 		socket.join(game.gameID);
-		// Notifications to the client
-		socket.emit('my_active_games_changed');
-		io.emit('lobby_changed');
+		socket.emit('my_active_games_changed'); // Notifications to the client
+        io.emit('lobby_changed');
     });
 
-    socket.on('join_game', function (data){
-    	let game = games.joinGame(data.gameID, data.playerName, socket.id);
-		socket.join(game.gameID);
-		io.to(game.gameID).emit('my_active_games_changed');
-		io.emit('lobby_changed');
+    socket.on('join_game_player', function (data){
+        let game = games.joinGamePlayer(data.gameID, data.playerName, socket.id);
+        socket.join(game.gameID);
+        io.to(game.gameID).emit('my_active_games_changed');
+        io.emit('lobby_changed');
+    });
+
+    socket.on('join_game_bot', function (data){
+        let game = games.joinGameBot(data.gameID, "Bot", data.difficulty);
+        socket.join(game.gameID);
+        io.to(game.gameID).emit('my_active_games_changed');
+        io.emit('lobby_changed');
     });
 
     socket.on('remove_game', function (data){
-    	let game = games.removeGame(data.gameID, socket.id);
+    	games.removeGame(data.gameID, socket.id);
     	socket.emit('my_active_games_changed');
     });
 
-    socket.on('play', function (data){
-		let game = games.gameByID(data.gameID);
-		if (game === null) {
-			socket.emit('invalid_play', {'type': 'Invalid_Game', 'game': null});
-			return;
+    socket.on('clickOnPiece', function (data){
+        let game = games.gameByID(data.gameID);
+
+        if (game === null) {
+            socket.emit('invalid_play', {'type': 'Invalid_Game', 'game': null});
+            return;
+        }
+
+        let numPlayer = 0;
+        for(let i = 0; i < game.playerSockets.size; i++){
+        	if(game.playerSockets.get(i)[0] === socket.id)
+        		numPlayer = i + 1;
 		}
-		var numPlayer = 0;
-		if (game.player1SocketID == socket.id) {
-			numPlayer = 1;
-		} else if (game.player2SocketID == socket.id) {
-			numPlayer = 2;
-		} 
-		if (numPlayer === 0) {
-			socket.emit('invalid_play', {'type': 'Invalid_Player', 'game': game});
-			return;
-		}
-		if (game.play(numPlayer, data.index)) {
-			io.to(game.gameID).emit('game_changed', game);
-		} else {
-			socket.emit('invalid_play', {'type': 'Invalid_Play', 'game': game});
-			return;
-		}
+
+        if (numPlayer === 0) {
+            socket.emit('invalid_play', {'type': 'Invalid_Player', 'game': game});
+            return;
+        }
+        if (game.clickPiece(numPlayer, data.index)) //ToChange
+            io.to(game.gameID).emit('game_changed', game);
+        else {
+            socket.emit('invalid_play', {'type': 'Invalid_Play', 'game': game});
+            return;
+        }
     });
 
     socket.on('get_game', function (data){
-		let game = games.gameByID(data.gameID);
-		socket.emit('game_changed', game);
+        socket.emit('game_changed', games.gameByID(data.gameID));
     });
 
-    socket.on('get_my_activegames', function (data){
-    	var my_games= games.getConnectedGamesOf(socket.id);
-    	socket.emit('my_active_games', my_games);
+    socket.on('get_my_active_games', function (){
+        socket.emit('my_active_games', games.getConnectedGamesOf(socket.id));
     });
 
     socket.on('get_my_lobby_games', function (){
-    	var my_games= games.getLobbyGamesOf(socket.id);
-    	socket.emit('my_lobby_games', my_games);
+        socket.emit('my_lobby_games', games.getLobbyGamesOf(socket.id));
     });
-
 });

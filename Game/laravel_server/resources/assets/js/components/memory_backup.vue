@@ -369,6 +369,10 @@
                 this.clickPiece(boardNotPlayed[playTwo]);
                 console.log("Random");
                 return;
+            },
+            clearTimer(){
+                clearTimeout(this.timer);
+                this.timer = null;
             }
         },
         computed:{

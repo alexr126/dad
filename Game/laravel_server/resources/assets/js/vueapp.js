@@ -22,8 +22,8 @@ Vue.use(VueSocketio, 'http://192.168.10.1:8080');
 const login = Vue.component('login', require('./components/login.vue'));
 const user = Vue.component('user', require('./components/user.vue'));
 const singleplayer_game = Vue.component('singlegame', require('./components/singleplayer_memory.vue'));
-const multiplayer_game = Vue.component('multiplayergame', require('./components/multiplayer_memory.vue'));
-const game = Vue.component('game', require('./components/memory.vue'));
+const multiplayer_game = Vue.component('multigame', require('./components/multiplayer_memory.vue'));
+const game = Vue.component('game', require('./components/memory_backup.vue'));
 
 const routes = [
   { path: '/', redirect: '/login' },
