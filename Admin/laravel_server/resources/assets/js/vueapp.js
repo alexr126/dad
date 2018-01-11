@@ -13,7 +13,7 @@ window.Vue = require('vue');
 
 import VueRouter from 'vue-router';
 import VueSocketio from 'vue-socket.io';
-import Auth from './packages/auth/Auth.js';
+//import Auth from './packages/auth/Auth.js';
 
 Vue.use(VueRouter);
 
@@ -24,18 +24,25 @@ Vue.use(require('vue-moment'));
 
 const login = Vue.component('login', require('./components/login.vue'));
 const user = Vue.component('user', require('./components/user.vue'));
-const image = Vue.component('image', require('./components/image.vue'));
 
 const routes = [
 	{ path: '/', redirect: '/login' },
 	{ path: '/login', component: login },
-  	{ path: '/users', component: user },
-  	{ path: '/images', component: image }
+  	{ path: '/users', component: user }
 ];
 
 const router = new VueRouter({
   	routes:routes
 });
+/*
+Router.beforeEach(
+	(to, from, next) =>{
+		if(Vue.auth.isAuthenticated()){
+			
+		}
+	})
+*/
+
 
 const app = new Vue({
 	router,

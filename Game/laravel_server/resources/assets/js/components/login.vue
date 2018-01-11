@@ -45,22 +45,19 @@
 		},
 	    methods: {
 	    	handleLoginSubmit: function(){
-	    		axios.get('api/users/nickname/'+this.user)
-    			.then(response=>{
-    				if(response.data.data.length == 0){
-    					axios.get('api/users/email/'+this.user)
-    						.then(response=>{
-    							if(response.data.data.length == 0){
-    								this.showSuccess = true;
-    								this.errorMessage = 'Credentials are wrong!'; 
-    							}else{
-    								this.login(this.user, this.password);
-    							}
-    						})
-    				}else{
-    					this.login(response.data.data[0].email, this.password);
-    				}
-    			})		
+                this.login(this.email, this.password);                
+			},
+	    	login: function(email, password){
+                axios.post('api/login', {email, password})
+	    		.then(response=>{
+	    			localStorage.setItem('token', response.data.access_token);
+	    			//localStorage.setItem('expiration', );
+	    			this.$router.push({path: "/users"});
+	    		}).catch(error =>{
+	    			this.showSuccess = true;
+	    			this.errorMessage = 'Credentials are wrong!';
+	    			console.log(error);
+	    		});
 	    	},
 	    	register: function(){
 	    		this.registeringUser = true;
@@ -72,12 +69,6 @@
 	    		this.currentUser = user;
 	    		this.login(user.email, user.password);
 	    	},
-	    	login: function(email, password){
-	    		axios.post('api/login', {email, password})
-	    		.then(response=>{
-	    			this.$router.push({path: "/users"});	    			
-	    		})
-	    	}
 	    },
 	    components: {
 	    	'registration': Register,
