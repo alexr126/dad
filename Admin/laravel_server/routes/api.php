@@ -21,15 +21,16 @@ Route::post('login', 'LoginControllerAPI@login');
 Route::middleware('auth:api')->post('logout', 'LoginControllerAPI@logout');
 
 //Users
-Route::middleware('auth:api')->get('users', 'UserControllerAPI@getUsers');
-Route::middleware('auth:api')->get('users/emailavailable', 'UserControllerAPI@emailAvailable');
-Route::middleware('auth:api')->get('users/{id}', 'UserControllerAPI@getUser');
-Route::middleware('auth:api')->post('users', 'UserControllerAPI@store');
-Route::middleware('auth:api')->put('users/{id}', 'UserControllerAPI@update');
-Route::middleware('auth:api')->delete('users/{id}', 'UserControllerAPI@delete');
-Route::middleware('auth:api')->put('users/block/{id}', 'UserControllerAPI@block');
-Route::middleware('auth:api')->put('users/unblock/{id}', 'UserControllerAPI@unblock');
-Route::get('users', 'UserControllerAPI@getUsers');
+Route::group(['middleware'=>'auth:api'], function(){
+    Route::get('users', 'UserControllerAPI@getUsers');
+    Route::get('users/emailavailable', 'UserControllerAPI@emailAvailable');
+    Route::get('users/{id}', 'UserControllerAPI@getUser');
+    Route::post('users', 'UserControllerAPI@store');
+    Route::put('users/{id}', 'UserControllerAPI@update');
+    Route::delete('users/{id}', 'UserControllerAPI@delete');
+    Route::put('users/block/{id}', 'UserControllerAPI@block');
+    Route::put('users/unblock/{id}', 'UserControllerAPI@unblock');
+});
 
 //Images
 Route::get('images', 'ImageControllerAPI@getImages');
@@ -40,12 +41,13 @@ Route::delete('images/remove/{id}', 'ImageControllerAPI@delete');
 Route::post('/upload', 'ImageControllerAPI@upload');
 
 //Games
-Route::middleware('auth:api')->get('games', 'GameControllerAPI@index');
-Route::middleware('auth:api')->get('games/lobby', 'GameControllerAPI@lobby');
-Route::middleware('auth:api')->get('games/status/{status}', 'GameControllerAPI@gamesStatus');
-Route::middleware('auth:api')->get('games/{id}', 'GameControllerAPI@getGame');
-Route::middleware('auth:api')->post('games', 'GameControllerAPI@store');
-Route::middleware('auth:api')->patch('games/{id}/join-start', 'GameControllerAPI@joinAndStart');
-Route::middleware('auth:api')->patch('games/{id}/endgame/{winner}', 'GameControllerAPI@endgame');
-
+Route::group(['middleware'=>'auth:api'], function(){
+    Route::get('games', 'GameControllerAPI@index');
+    Route::get('games/lobby', 'GameControllerAPI@lobby');
+    Route::get('games/status/{status}', 'GameControllerAPI@gamesStatus');
+    Route::get('games/{id}', 'GameControllerAPI@getGame');
+    Route::post('games', 'GameControllerAPI@store');
+    Route::patch('games/{id}/join-start', 'GameControllerAPI@joinAndStart');
+    Route::patch('games/{id}/endgame/{winner}', 'GameControllerAPI@endgame');
+});
 
