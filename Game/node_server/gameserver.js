@@ -35,6 +35,14 @@ let games = new GameList();
 io.on('connection', function (socket) {
     console.log('client has connected');
 
+
+    /* Create a Game. Needs:
+     * -- SocketID @NotNull
+     * -- PlayerName @NotNull
+     * -- NumberOfPlayers @Nullable
+     * -- XAxis @Nullable If NumberOfPlayers != null
+     * -- YAxis @Nullable If NumberOfPlayers != null
+     */
     socket.on('create_game', function (data){
     	let game = games.createGame(socket.id, data.playerName, data.numberPlayer, data.XAxis, data.YAxis);
 		socket.join(game.gameID);
@@ -42,13 +50,23 @@ io.on('connection', function (socket) {
         io.emit('lobby_changed');
     });
 
+    /* Function for a Player to join a game. Needs:
+     * -- GameID @NotNull
+     * -- PlayerName @NotNull
+     * -- SocketID @NotNull
+     */
     socket.on('join_game_player', function (data){
         let game = games.joinGamePlayer(data.gameID, data.playerName, socket.id);
         socket.join(game.gameID);
         io.to(game.gameID).emit('my_active_games_changed');
         io.emit('lobby_changed');
+        console.log("I finished The Join." , game);
     });
 
+    /* Function for a Bot to join a game. Needs:
+     * -- GameID @NotNull
+     * -- Difficulty Of the Bot @NotNull
+     */
     socket.on('join_game_bot', function (data){
         let game = games.joinGameBot(data.gameID, "Bot", data.difficulty);
         socket.join(game.gameID);
@@ -56,15 +74,44 @@ io.on('connection', function (socket) {
         io.emit('lobby_changed');
     });
 
+    /* Function to Remove a Person from a game or the hole game. Needs:
+     *  -- GameID @NotNull
+     *  -- SocketID @NotNull
+     */
     socket.on('remove_game', function (data){
     	games.removeGame(data.gameID, socket.id);
     	socket.emit('my_active_games_changed');
     });
 
-    socket.on('clickOnPiece', function (data){
+    /* Function to get a Specific Game. Needs:
+     * -- GameID @NotNull
+     */
+    socket.on('get_game', function (data){
+        socket.emit('game_changed', games.gameByID(data.gameID));
+    });
+
+    /* Function to get a list of Active Game by a User. Needs:
+     * -- SocketID @NotNull
+     */
+    socket.on('get_my_active_games', function (){
+        socket.emit('my_active_games', games.getConnectedGamesOf(socket.id));
+    });
+
+    /* Function to get list of lobby Game available for a User. Needs:
+     * -- SocketID @NotNull
+     */
+    socket.on('get_my_lobby_games', function (){
+        socket.emit('my_lobby_games', games.getLobbyGamesOf(socket.id));
+    });
+
+    /* Function to Play. Needs:
+     * GameID @NotNull
+     * ...
+     */
+    socket.on('clickOnPiece', function (data){ //ToDo: Here!Stayed Here.
         let game = games.gameByID(data.gameID);
 
-        if (game === null) {
+        if (game == null) {
             socket.emit('invalid_play', {'type': 'Invalid_Game', 'game': null});
             return;
         }
@@ -85,17 +132,5 @@ io.on('connection', function (socket) {
             socket.emit('invalid_play', {'type': 'Invalid_Play', 'game': game});
             return;
         }
-    });
-
-    socket.on('get_game', function (data){
-        socket.emit('game_changed', games.gameByID(data.gameID));
-    });
-
-    socket.on('get_my_active_games', function (){
-        socket.emit('my_active_games', games.getConnectedGamesOf(socket.id));
-    });
-
-    socket.on('get_my_lobby_games', function (){
-        socket.emit('my_lobby_games', games.getLobbyGamesOf(socket.id));
     });
 });

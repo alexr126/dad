@@ -1,5 +1,5 @@
 <template>
-	<div>
+    <div>
         <div>
             <h3 class="text-center">{{ title }}</h3>
             <br>
@@ -11,7 +11,7 @@
             <p><button class="btn btn-xs btn-success" v-on:click.prevent="createGame">Create a New Game</button></p>
             <hr>
             <h4>Pending games (<a @click.prevent="loadLobby">Refresh</a>)</h4>
-            <lobby :games="lobbyGames" @join-click="join"></lobby>
+            <lobby :games="lobbyGames" @join_game_player="joinPlayer"></lobby>
             <template v-for="game in activeGames">
                 <game :game="game"></game>
             </template>
@@ -21,12 +21,12 @@
 
 <script type="text/javascript">
     import Lobby from './lobby.vue';
-    import GameTicTocToe from './game-memory.vue';
+    import MemoryGame from './game-memory.vue';
 
-	export default {
+    export default {
         data: function(){
-			return {
-                title: 'Multiplayer TicTacToe',
+            return {
+                title: 'Multiplayer Memory',
                 currentPlayer: 'Player X',
                 lobbyGames: [],
                 activeGames: [],
@@ -38,8 +38,8 @@
                 console.log('socket connected');
                 this.socketId = this.$socket.id;
             },
-            discconnect(){
-                console.log('socket disconnected');
+            disconnect(){
+                console.log('socket disconnect');
                 this.socketId = "";
             },
             lobby_changed(){
@@ -53,67 +53,46 @@
             },
             my_lobby_games(games){
                 this.lobbyGames = games;
-            },
-            invalid_play(errorObject){
-                if (errorObject.type == 'Invalid_Game') {
-                    alert("Error: Game does not exist on the server");
-                } else if (errorObject.type == 'Invalid_Player') {
-                    alert("Error: Player not valid for this game");
-                } else if (errorObject.type == 'Invalid_Play') {
-                    alert("Error: Move is not valid or it's not your turn");
-                } else {
-                    alert("Error: " + errorObject.type);
-                }
-
-            },
-            game_changed(game){
-                for (var lobbyGame of this.lobbyGames) {
-                    if (game.gameID == lobbyGame.gameID) {
-                        Object.assign(lobbyGame, game);
-                        break;
-                    }
-                }
-                for (var activeGame of this. activeGames) {
-                    if (game.gameID == activeGame.gameID) {
-                        Object.assign(activeGame, game);
-                        break;
-                    }
-                }
-            },
-        },        
+            }
+        },
         methods: {
             loadLobby(){
                 this.$socket.emit('get_my_lobby_games');
             },
             loadActiveGames(){
-                this.$socket.emit('get_my_activegames');
+                this.$socket.emit('get_my_active_games');
             },
             createGame(){
-                if (this.currentPlayer == "") {
+                // For this to work, server must handle (on event) the "create_game" message
+                if (this.currentPlayer === "") {
                     alert('Current Player is Empty - Cannot Create a Game');
-                    return;
                 }
                 else {
-                    this.$socket.emit('create_game', { playerName: this.currentPlayer });   
+                    console.log("I created.");
+                    this.$socket.emit('create_game', { playerName: this.currentPlayer, numberPlayer: 2, XAxis: null, YAxis: null});
                 }
             },
-            join(game){
-                if (game.player1 == this.currentPlayer) {
-                    alert('Cannot join a game because your name is the same as Player 1');
-                    return;
+            joinPlayer(game) {
+                console.log(game.playersHash);
+                for (let i = 0; i < game.playersHash.size; i++){
+                    if (game.playersHash.get(i)[0] === this.currentPlayer) { //ToDo: Fix the error of the PlayersHash.
+                        alert('Cannot join a game because your name is the same as Player ' + i+1);
+                        return;
+                    }
                 }
-                this.$socket.emit('join_game', {gameID: game.gameID, playerName: this.currentPlayer });   
+                this.$socket.emit('join_game_player', {gameID: game.gameID, playerName: this.currentPlayer });
             },
-            play(game, index){
-                this.$socket.emit('play', {gameID: game.gameID, index: index });   
+            clickPiece(game, index){
+                this.$socket.emit('clickOnPiece', )
+
             },
             close(game){
-                this.$socket.emit('remove_game', {gameID: game.gameID });   
+                // to close a game
             }
         },
         components: {
             'lobby': Lobby,
-            'game': GameTicTocToe,
+            'game': MemoryGame,
         },
         mounted() {
             this.loadLobby();
@@ -122,6 +101,6 @@
     }
 </script>
 
-<style>	
-    
+<style>
+
 </style>

@@ -10,7 +10,7 @@
 	    <tbody>
 	        <tr v-for="game in games"  :key="game.gameID">
 	            <td>{{ game.gameID }}</td>
-	            <td>{{ game.playerSockets.get(0)[1] }}</td>
+	            <td>{{ game.playerOne}}</td>
 	            <td>
 	                <a class="btn btn-xs btn-primary" v-on:click.prevent="join(game)">Join</a>
 	            </td>
@@ -24,9 +24,10 @@
 	module.exports={
 		props: ['games'],
         methods: {
+		    //Join a game
             join(game) {
             	this.$emit('join_game_player', game);
-            },		
+            },
         },		
 	}
 </script>
