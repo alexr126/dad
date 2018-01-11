@@ -71,7 +71,7 @@
 					}
 					axios.post('api/users', user)
 					.then(response=>{
-						this.$emit('user-registred', user);
+						this.$emit('user-registred', this.email, this.password);
 					})
 				}else{
 					console.log('Error: passwords does not match!');
