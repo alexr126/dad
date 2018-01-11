@@ -11,11 +11,17 @@
 			<button type="button" class="close-btn" v-on:click="showSuccess=false">&times;</button>
 			<strong>{{ successMessage }}</strong>
 		</div>
+
+        <file-upload>
+        </file-upload>
+
 	</div>				
 </template>
 
 <script type="text/javascript">
+
 	import ImageList from './imageList.vue';
+	import Upload from './fileUpload.vue';
 	
 	export default {
 		data: function(){
@@ -50,10 +56,11 @@
 			childMessage: function(message){
 				this.showSuccess = true;
 	            this.successMessage = message;
-			}
+			},
 	    },
 	    components: {
-	    	'image-list': ImageList
+	    	'image-list': ImageList,
+	    	'file-upload': Upload
 	    },
 	    mounted() {
 			this.getImages();
