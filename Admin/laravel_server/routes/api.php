@@ -36,6 +36,8 @@ Route::get('images', 'ImageControllerAPI@getImages');
 Route::get('images/{id}', 'ImageControllerAPI@getImage');
 Route::post('images', 'ImageControllerAPI@store');
 Route::delete('images/remove/{id}', 'ImageControllerAPI@delete');
+//Route::post('images/upload', 'ImageControllerAPI@upload');
+Route::post('/upload', 'ImageControllerAPI@upload');
 
 //Games
 Route::middleware('auth:api')->get('games', 'GameControllerAPI@index');

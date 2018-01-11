@@ -25,6 +25,30 @@ class ImageControllerAPI extends Controller
     {
         return new ImageResource(Image::find($id));
     }
+
+    public function upload(Request $request) 
+    {
+        $validator = Validator::make($request->all(), [
+            'image' => 'required|image64:jpeg,jpg,png'
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['errors'=>$validator->errors()]);
+        } else {
+            $imageData = $request->get('image');
+            $fileName = Carbon::now()->timestamp . '_' . uniqid() . '.' . explode('/', explode(':', substr($imageData, 0, strpos($imageData, ';')))[1])[1];
+            Image::make($request->get('image'))->save(public_path('images/').$fileName);
+            return response()->json(['error'=>false]);
+        }
+    }
+
+    /*public function upload(Request $request)
+    {
+
+    }*/
+
+
+
+
 /*
     public function store(Request $request)
     {
@@ -55,8 +79,8 @@ class ImageControllerAPI extends Controller
 */
     public function delete($id)
     {
-        $user = User::findOrFail($id);
-        $user->delete();
+        $image = Image::findOrFail($id);
+        $image->delete();
         return response()->json(null, 204);
     }
  /* 
