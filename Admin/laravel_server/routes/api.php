@@ -33,12 +33,16 @@ Route::group(['middleware'=>'auth:api'], function(){
 });
 
 //Images
-Route::get('images', 'ImageControllerAPI@getImages');
-Route::get('images/{id}', 'ImageControllerAPI@getImage');
-Route::post('images', 'ImageControllerAPI@store');
-Route::delete('images/remove/{id}', 'ImageControllerAPI@delete');
-//Route::post('images/upload', 'ImageControllerAPI@upload');
-Route::post('/upload', 'ImageControllerAPI@upload');
+//Route::group(['middleware'=>'auth:api'], function(){
+	Route::get('images', 'ImageControllerAPI@getImages');
+	Route::get('images/{id}', 'ImageControllerAPI@getImage');
+	Route::put('images/activate/{id}', 'ImageControllerAPI@activate');
+    Route::put('images/disable/{id}', 'ImageControllerAPI@disable');
+	Route::post('images', 'ImageControllerAPI@store');
+	Route::delete('images/remove/{id}', 'ImageControllerAPI@delete');
+	//Route::post('images/upload', 'ImageControllerAPI@upload');
+	Route::post('/upload', 'ImageControllerAPI@upload');
+//});
 
 //Games
 Route::group(['middleware'=>'auth:api'], function(){

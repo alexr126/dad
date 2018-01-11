@@ -46,8 +46,20 @@ class ImageControllerAPI extends Controller
 
     }*/
 
+    public function activate(Request $request, $id)
+    {
+        $image = Image::findOrFail($id);
+        $image->update($request->all());
+        return new ImageResource($image);
+    }
 
 
+    public function disable(Request $request, $id)
+    {
+        $image = Image::findOrFail($id);
+        $image->update($request->all());
+        return new ImageResource($image);
+    }
 
 /*
     public function store(Request $request)

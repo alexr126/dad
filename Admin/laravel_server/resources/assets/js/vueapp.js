@@ -24,12 +24,14 @@ Vue.use(require('vue-moment'));
 
 const login = Vue.component('login', require('./components/login.vue'));
 const user = Vue.component('user', require('./components/user.vue'));
+const image = Vue.component('image', require('./components/image.vue'));
 Vue.component('logout', require('./components/logout.vue'));
 
 const routes = [
 	{ path: '/', redirect: '/login' },
 	{ path: '/login', component: login },
-  	{ path: '/users', component: user }
+  	{ path: '/users', component: user },
+  	{ path: '/images', component: image }
 ];
 
 const router = new VueRouter({
