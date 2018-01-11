@@ -25,6 +25,8 @@ const user = Vue.component('user', require('./components/user.vue'));
 const singleplayer_game = Vue.component('singlegame', require('./components/singleplayer_memory.vue'));
 const multiplayer_game = Vue.component('multigame', require('./components/multiplayer_memory.vue'));
 const game = Vue.component('game', require('./components/memory_backup.vue'));
+Vue.component('logout', require('./components/logout.vue'));
+
 
 const routes = [
   { path: '/', redirect: '/login' },

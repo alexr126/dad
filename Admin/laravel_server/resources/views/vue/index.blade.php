@@ -3,6 +3,7 @@
 @section('title', 'Memory Game Admin')
 
 @section('content')
+    <logout></logout>
     <router-link to="/users">Users</router-link>
     <router-link to="/images">Images</router-link>
     <router-view></router-view>

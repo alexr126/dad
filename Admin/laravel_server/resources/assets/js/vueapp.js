@@ -24,6 +24,7 @@ Vue.use(require('vue-moment'));
 
 const login = Vue.component('login', require('./components/login.vue'));
 const user = Vue.component('user', require('./components/user.vue'));
+Vue.component('logout', require('./components/logout.vue'));
 
 const routes = [
 	{ path: '/', redirect: '/login' },
