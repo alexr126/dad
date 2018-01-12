@@ -14,6 +14,8 @@
 	        	axios.defaults.headers.common['Accept'] = 'application/json';
 	            axios.post('api/logout')
                 .then(response=>{
+                	localStorage.removeItem('token');
+                	//localStorage.removeItem('expiration');
             		this.$router.push({path: "/login"});
                 }).catch(errors=>{
                 	console.log(errors);

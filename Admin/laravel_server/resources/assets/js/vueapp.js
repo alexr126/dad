@@ -9,11 +9,9 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
-//Vue.prototype.$http = axios;
 
 import VueRouter from 'vue-router';
 import VueSocketio from 'vue-socket.io';
-//import Auth from './packages/auth/Auth.js';
 
 Vue.use(VueRouter);
 
@@ -29,22 +27,34 @@ Vue.component('logout', require('./components/logout.vue'));
 
 const routes = [
 	{ path: '/', redirect: '/login' },
-	{ path: '/login', component: login },
-  	{ path: '/users', component: user },
-  	{ path: '/images', component: image }
+	{ path: '/login', component: login, meta: { forVisitors: true}},
+  	{ path: '/users', component: user, meta: {requireAuth: true}},
+  	{ path: '/images', component: image, meta: {requireAuth: true}}
 ];
 
 const router = new VueRouter({
   	routes:routes
 });
-/*
-Router.beforeEach(
+
+var authToken;
+router.beforeEach(
 	(to, from, next) =>{
-		if(Vue.auth.isAuthenticated()){
-			
-		}
-	})
-*/
+		if(to.meta.forVisitors){
+			authToken = localStorage.getItem('token');
+			if(authToken != null){
+				next({
+					path: '/users'
+				})		
+			}else next();
+		}else if(to.meta.requireAuth){
+			authToken = localStorage.getItem('token');
+			if(authToken == null){
+				next({
+					path: '/login'
+				})		
+			}else next();
+		}else next();
+	});
 
 
 const app = new Vue({

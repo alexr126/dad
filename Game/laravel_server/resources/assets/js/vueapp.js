@@ -9,11 +9,9 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
-Vue.prototype.$http = axios;
 
 import VueRouter from 'vue-router';
 import VueSocketio from 'vue-socket.io';
-//import Auth from './packages/auth/Auth.js';
 
 Vue.use(VueRouter);
 
@@ -30,17 +28,37 @@ Vue.component('logout', require('./components/logout.vue'));
 
 const routes = [
   { path: '/', redirect: '/login' },
-  { path: '/login', component: login },
-  { path: '/users', component: user },
-  { path: '/singlememory', component: singleplayer_game },
-  { path: '/multimemory', component: multiplayer_game },
-  { path: '/game', component: game } //tests
+  { path: '/login', component: login, meta: { forVisitors: true} },
+  { path: '/users', component: user, meta: {requireAuth: true} },
+  { path: '/singlememory', component: singleplayer_game, meta: {requireAuth: true} },
+  { path: '/multimemory', component: multiplayer_game, meta: {requireAuth: true} },
+  { path: '/game', component: game, meta: {requireAuth: true} } //tests
 ];
 
 
 const router = new VueRouter({
   routes:routes
 });
+
+var authToken;
+router.beforeEach(
+  (to, from, next) =>{
+    if(to.meta.forVisitors){
+      authToken = localStorage.getItem('token');
+      if(authToken != null){
+        next({
+          path: '/users'
+        })    
+      }else next();
+      }else if(to.meta.requireAuth){
+        authToken = localStorage.getItem('token');
+        if(authToken == null){
+          next({
+          path: '/login'
+        })    
+      }else next();
+    }else next();
+  });
 
 const app = new Vue({
   router,

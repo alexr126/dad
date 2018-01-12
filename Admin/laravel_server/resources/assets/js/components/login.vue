@@ -51,7 +51,8 @@
 	    			this.errorMessage = 'Credentials are wrong!';
 	    			console.log(error);
 	    		});
-	    	},/*
+	    	},
+	    	/*
 	    	fbLogin: function(){
 	    		FB.login(function(response){
 	    			if(response.status === 'connected'){
