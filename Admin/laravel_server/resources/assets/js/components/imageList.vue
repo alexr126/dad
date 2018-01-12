@@ -21,6 +21,8 @@
             	<td>{{ image.created_at.date | moment("DD/MM/YYYY HH:mm") }}</td>
             	<td>{{ image.updated_at.date | moment("DD/MM/YYYY HH:mm") }}</td>
 	            <td>
+	            	<a v-if="image.active" class="btn btn-xs btn-danger" v-on:click.prevent="disableImage(image)">Disable</a>
+	            	<a v-else class="btn btn-xs btn-primary" v-on:click.prevent="activateImage(image)">Activate</a>
                     <a class="btn btn-xs btn-danger" v-on:click.prevent="deleteImage(image)">Delete</a>
 	            </td>
 	        </tr>
@@ -34,12 +36,20 @@
 		props: ['images'],
 		data: function(){
 			return { 
-
+				currentImage: null
 			}
 		},
         methods: {
             deleteImage: function(image){
                 this.$emit('delete-click', image);
+			},
+			activateImage: function(image){
+				this.currentImage = image;
+                this.$emit('activate-click', image);
+			},
+			disableImage: function(image){
+				this.currentImage = image;
+                this.$emit('disable-click', image);
 			}
         },		
 	}

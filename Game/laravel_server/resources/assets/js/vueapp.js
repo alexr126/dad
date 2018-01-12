@@ -9,11 +9,9 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
-Vue.prototype.$http = axios;
 
 import VueRouter from 'vue-router';
 import VueSocketio from 'vue-socket.io';
-import Auth from './packages/auth/Auth.js';
 
 Vue.use(VueRouter);
 
@@ -25,14 +23,16 @@ const user = Vue.component('user', require('./components/user.vue'));
 const singleplayer_game = Vue.component('singlegame', require('./components/singleplayer_memory.vue'));
 const multiplayer_game = Vue.component('multigame', require('./components/multiplayer_memory.vue'));
 const game = Vue.component('game', require('./components/memory_backup.vue'));
+Vue.component('logout', require('./components/logout.vue'));
+
 
 const routes = [
   { path: '/', redirect: '/login' },
-  { path: '/login', component: login },
-  { path: '/users', component: user },
-  { path: '/singlememory', component: singleplayer_game },
-  { path: '/multimemory', component: multiplayer_game },
-  { path: '/game', component: game } //tests
+  { path: '/login', component: login, meta: { forVisitors: true} },
+  { path: '/users', component: user, meta: {requireAuth: true} },
+  { path: '/singlememory', component: singleplayer_game, meta: {requireAuth: true} },
+  { path: '/multimemory', component: multiplayer_game, meta: {requireAuth: true} },
+  { path: '/game', component: game, meta: {requireAuth: true} } //tests
 ];
 
 
@@ -40,11 +40,31 @@ const router = new VueRouter({
   routes:routes
 });
 
+router.beforeEach(
+  (to, from, next) =>{
+    if(to.meta.forVisitors){
+      this.userToken = localStorage.getItem('token');
+      if(this.userToken != null){
+        next({
+          path: '/users'
+        })    
+      }else next();
+      }else if(to.meta.requireAuth){
+        this.userToken = localStorage.getItem('token');
+        if(this.userToken == null){
+          next({
+          path: '/login'
+        })    
+      }else next();
+    }else next();
+  });
+
 const app = new Vue({
   router,
   data:{
     player1:undefined,
     player2: undefined,
+    userToken: localStorage.getItem('token')
   }
 }).$mount('#app');
 

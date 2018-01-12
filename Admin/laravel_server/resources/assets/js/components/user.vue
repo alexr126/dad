@@ -94,17 +94,12 @@
             	}        
 	        },
 	        getUsers: function(){
-	        	var auth = 'Bearer '+ this.userToken;
-	        	console.log('ADMIN: ', auth);
+	        	var auth = "Bearer "+ this.userToken;
 	        	axios.defaults.headers.common['Authorization'] = auth;
-	        	console.log(axios.defaults.headers);
+	        	axios.defaults.headers.common['Accept'] = 'application/json';
 	            axios.get('api/users')
 	                .then(response=>{
-	                	if(!response){
-	                		console.log(response);
-	                	}else{
-	                		this.users = response.data.data; 
-	                	}
+                		this.users = response.data.data; 
 	                }).catch(errors=>{
 	                	console.log(errors);
 	                });
@@ -121,7 +116,7 @@
 	    	'user-reason-removed': UserReasonRemoved
 	    },
 	    mounted() {
-	    	//this.userToken = localStorage.getItem('token');
+	    	this.userToken = localStorage.getItem('token');
 			this.getUsers();
 			/*if (this.$root.departments.length === 0) {
 				axios.get('api/departments')

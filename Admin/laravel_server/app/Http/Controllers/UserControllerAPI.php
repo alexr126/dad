@@ -3,64 +3,31 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-//use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Contracts\Support\Jsonable;
 
-use App\Http\Resources\Image as ImageResource;
+use App\Http\Resources\User as UserResource;
 use Illuminate\Support\Facades\DB;
 
-use App\Image;
+use App\User;
+use App\BlockUserRequest;
+use App\UnblockUserRequest;
+use Hash;
 
-class ImageControllerAPI extends Controller
+class UserControllerAPI extends Controller
 {
-    public function getImages(Request $request)
+    public function getUsers(Request $request)
     {
         if ($request->has('page')) {
-            return ImageResource::collection(Image::paginate(5));
+            return UserResource::collection(User::paginate(5));
         } else {
-            return ImageResource::collection(Image::all());
+            return UserResource::collection(User::all());
         }
     }
 
-    public function getImage($id)
+    public function getUser($id)
     {
-        return new ImageResource(Image::find($id));
+        return new UserResource(User::find($id));
     }
-
-    public function upload(Request $request) 
-    {
-        $validator = Validator::make($request->all(), [
-            'image' => 'required|image64:jpeg,jpg,png'
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['errors'=>$validator->errors()]);
-        } else {
-            $imageData = $request->get('image');
-            $fileName = Carbon::now()->timestamp . '_' . uniqid() . '.' . explode('/', explode(':', substr($imageData, 0, strpos($imageData, ';')))[1])[1];
-            Image::make($request->get('image'))->save(public_path('images/').$fileName);
-            return response()->json(['error'=>false]);
-        }
-    }
-
-    /*public function upload(Request $request)
-    {
-
-    }*/
-
-    public function activate(Request $request, $id)
-    {
-        $image = Image::findOrFail($id);
-        $image->update($request->all());
-        return new ImageResource($image);
-    }
-
-
-    public function disable(Request $request, $id)
-    {
-        $image = Image::findOrFail($id);
-        $image->update($request->all());
-        return new ImageResource($image);
-    }
-
 /*
     public function store(Request $request)
     {
@@ -89,13 +56,33 @@ class ImageControllerAPI extends Controller
         return new UserResource($user);
     }
 */
+    public function block(Request $request, $id)
+    {
+        $request->validate([
+                'reason_blocked' => 'required'
+            ]);
+        $user = User::findOrFail($id);
+        $user->update($request->all());
+        return new UserResource($user);
+    }
+
+    public function unblock(Request $request, $id)
+    {
+        $request->validate([
+                'reason_reactivated' => 'required'
+            ]);
+        $user = User::findOrFail($id);
+        $user->update($request->all());
+        return new UserResource($user);
+    }
+
     public function delete($id)
     {
-        $image = Image::findOrFail($id);
-        $image->delete();
+        $user = User::findOrFail($id);
+        $user->delete();
         return response()->json(null, 204);
     }
- /* 
+ /*   
     public function emailAvailable(Request $request)
     {
         $totalEmail = 1;
