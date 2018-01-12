@@ -5,12 +5,18 @@
             <br>
         </div>
         <div class="game-zone-content">
-            <div class="alert" :class="alerttype">
-                <strong>{{ message }} &nbsp;&nbsp;&nbsp;&nbsp;<a v-show="game.gameEnded" v-on:click.prevent="closeGame">Close Game</a></strong>
+            <div class="bg-info">
+                <h3>Players On the game: </h3>
+                <div v-for="(player, key) in game.arrayPlayers" >
+                    <h5> {{key}} : {{player}}</h5>
+                </div>
+            </div>
+            <div class="alert" :class="alert_type">
+                <strong>{{ message }} &nbsp;&nbsp;&nbsp;&nbsp; <a v-show="game.isGameEnded" v-on:click.prevent="closeGame">Close Game</a></strong>
             </div>
             <div class="board">
                 <div v-for="(piece, key) of game.boardClass.board" >
-                    <img v-bind:src="pieceImageURL(piece)" v-on:click="clickPiece(piece)">
+                    <img v-bind:src="pieceImageURL(key)" v-on:click="clickPiece(key)">
                 </div>
             </div>
             <hr>
@@ -22,47 +28,112 @@
     export default {
         props: ['game'],
         data: function(){
-            return {
-
-            }
+            return {}
         },
         computed: {
-            message(){
-                if(this.game.gameEnded){
-                    let winnerNumber = 0;
-                    let winnerName = 0;
-                    this.game.playersHash.forEach(function (item, key, mapObj){ // The Map : PlayerName and gameValue
-                        if(winnerNumber < item[1]){
-                            winnerNumber = item[1];
-                            winnerName = item[0];
-                        }
-                    });
-                    return this.successMessage = "Winner is " + winnerName + " With " + winnerNumber;
+            ownPlayerNumber(){
+                switch(this.$parent.socketId) {
+                    case this.game.playerSockets[0]:
+                        return 1;
+                    case this.game.playerSockets[1]:
+                        return 2;
+                    case this.game.playerSockets[2]:
+                        return 3;
+                    case this.game.playerSockets[3]:
+                        return 4;
+                    default:
+                        return 0;
                 }
-                //return "Player" + this.game.playersHash.get(this.game.currentValue - 1)[0] + "Played";
-                return "Error... Check.";
             },
-            alerttype(){
-                if(this.game.gameEnded){
-                    return "alert-success";
+            message(){
+                console.log("1", this.game);
+                if (!this.game.isGameStarted) {
+                    return "Game has not started yet";
+
+                } else if (this.game.gameEnded) {
+                    let playerOrdered = new Array();
+                    playerOrdered = this.game.arrayPlayers;
+                    let scoreOrdered = new Array();
+                    scoreOrdered = this.game.arrayScore;
+                    let auxVariable;
+                    do{         //Bubble Sort
+                        auxVariable = false;
+                        for (let j = 0; j < scoreOrdered.length-1; j++) {
+                            if (scoreOrdered[j] < scoreOrdered[j]){
+                                var tempScore = scoreOrdered[j];
+                                scoreOrdered[j] = scoreOrdered[j+1];
+                                scoreOrdered[j+1] = tempScore;
+
+                                var tempPlayer = playerOrdered[j];
+                                playerOrdered[j] = playerOrdered[j+1];
+                                playerOrdered[j+1] = tempPlayer;
+
+                                auxVariable = true;
+                            }
+                        }
+                    }while (auxVariable);
+                    if(scoreOrdered[0] == scoreOrdered[1]) //ToDo: IFThere is time, do it better.
+                        return this.successMessage = "There has been a Tie.";
+
+                    return this.successMessage = "Winner is " + playerOrdered[0] + " With " + scoreOrdered[0];
+                } else {
+                    if (this.game.currentPlayerPlaying == this.ownPlayerNumber) {
+                        return "It's your turn";
+                    } else {
+                        return "It's '" + this.game.arrayPlayers[this.game.currentPlayerPlaying - 1] + "' turn";
+                    }
                 }
-                return "alert-info";
+            },
+            alert_type(){
+                if (!this.game.isGameStarted) {
+                    return "alert-warning";
+                } else if (this.game.gameEnded) {
+                    if (this.game.winner == this.ownPlayerNumber) {
+                        return "alert-success";
+                    } else if (this.game.winner == 0) {
+                        return "alert-info";
+                    }
+                    return "alert-danger";
+                }
+                if (this.game.currentPlayerPlaying == this.ownPlayerNumber) {
+                    return "alert-success";
+                } else {
+                    return "alert-info";
+                }
+
             }
         },
         methods: {
             closeGame (){
-                console.log(this.game);
                 this.$emit('close-game', { gameID : this.game.gameID });
             },
-            pieceImageURL: function (piece) {
-                if(piece.isHidden)
-                    return piece.pathHidden;
-                else
-                    return piece.pathFlip;
+            pieceImageURL: function (key) {
+                this.pathToImage(this.game.boardClass.board[key]);
             },
-            clickPiece: function(piece) {
-                this.$emit('clickPiece', { gameID: this.game.gameID, piece: piece });
+            clickPiece: function (key) {
+                if (!this.game.isGameEnded && this.game.isGameStarted){
+                    if(this.game.currentPlayerPlaying != this.ownPlayerNumber){
+                        alert("Not your Turn");
+                    } else {
+                        if(this.game.boardClass.board[key].isHidden) {
+                            this.$parent.clickPiece(this.game, key);
+                            this.pieceImageURL(key);
+                        }
+                        else
+                            alert("You cant press One that is already Opened. Select another one!");
+                    }
+                }
+                else{
+                    alert("Game has not started Or Has ended!");
+                }
+            },
+            pathToImage(piece){
+                if(piece.isHidden){
+                    return piece.pathHidden;
+                }
+                return piece.pathFlip;
             }
+
         }
     }
 </script>

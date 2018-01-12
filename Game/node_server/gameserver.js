@@ -19,8 +19,11 @@ var app = require('http').createServer();
 
 var io = require('socket.io')(app);
 
-var MemoryGame = require('./gamemodel.js');
 var GameList = require('./gamelist.js');
+var MemoryGame = require('./gamemodel.js');
+var Board = require('./Board.js');
+var Piece = require('./Piece.js');
+
 
 app.listen(8080, function(){
 	console.log('listening on *:8080');
@@ -35,7 +38,6 @@ let games = new GameList();
 io.on('connection', function (socket) {
     console.log('client has connected');
 
-
     /* Create a Game. Needs:
      * -- SocketID @NotNull
      * -- PlayerName @NotNull
@@ -45,8 +47,10 @@ io.on('connection', function (socket) {
      */
     socket.on('create_game', function (data){
     	let game = games.createGame(socket.id, data.playerName, data.numberPlayer, data.XAxis, data.YAxis);
-		socket.join(game.gameID);
+
+        socket.join(game.gameID);
 		socket.emit('my_active_games_changed'); // Notifications to the client
+
         io.emit('lobby_changed');
     });
 
@@ -57,10 +61,11 @@ io.on('connection', function (socket) {
      */
     socket.on('join_game_player', function (data){
         let game = games.joinGamePlayer(data.gameID, data.playerName, socket.id);
+
         socket.join(game.gameID);
+
         io.to(game.gameID).emit('my_active_games_changed');
         io.emit('lobby_changed');
-        console.log("I finished The Join." , game);
     });
 
     /* Function for a Bot to join a game. Needs:
@@ -69,7 +74,9 @@ io.on('connection', function (socket) {
      */
     socket.on('join_game_bot', function (data){
         let game = games.joinGameBot(data.gameID, "Bot", data.difficulty);
+
         socket.join(game.gameID);
+
         io.to(game.gameID).emit('my_active_games_changed');
         io.emit('lobby_changed');
     });
@@ -80,6 +87,7 @@ io.on('connection', function (socket) {
      */
     socket.on('remove_game', function (data){
     	games.removeGame(data.gameID, socket.id);
+
     	socket.emit('my_active_games_changed');
     });
 
@@ -106,31 +114,36 @@ io.on('connection', function (socket) {
 
     /* Function to Play. Needs:
      * GameID @NotNull
-     * ...
+     * Index @NotNull
      */
-    socket.on('clickOnPiece', function (data){ //ToDo: Here!Stayed Here.
+    socket.on('click_on_piece', function (data){
+
+        console.log("I'm on click_on_piece, on gameServer. this is my DATA.", data);
         let game = games.gameByID(data.gameID);
 
-        if (game == null) {
-            socket.emit('invalid_play', {'type': 'Invalid_Game', 'game': null});
+        if (game == null)
             return;
-        }
 
         let numPlayer = 0;
-        for(let i = 0; i < game.playerSockets.size; i++){
-        	if(game.playerSockets.get(i)[0] === socket.id)
-        		numPlayer = i + 1;
-		}
+        for (let i = 0; i < game.playerSockets.length; i++)
+        	if (game.playerSockets[i] == socket.id)
+                numPlayer = i + 1;
 
-        if (numPlayer === 0) {
+        if (numPlayer == 0) {
             socket.emit('invalid_play', {'type': 'Invalid_Player', 'game': game});
             return;
         }
-        if (game.clickPiece(numPlayer, data.index)) //ToChange
-            io.to(game.gameID).emit('game_changed', game);
-        else {
-            socket.emit('invalid_play', {'type': 'Invalid_Play', 'game': game});
-            return;
-        }
+
+        console.log("I Passed all validations. Will click on piece", data.key);
+
+        let piece = game.clickPieceM(game.boardClass.board[data.key]);
+        console.log("Clicked.", piece);
+        game.boardClass.board[data.key] = piece;
+
+        console.log("New board...", game);
+        io.to(game.gameID).emit('game_changed', game);
+        return;
     });
+
+
 });

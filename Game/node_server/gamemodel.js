@@ -1,84 +1,81 @@
 /*jshint esversion: 6 */
 
+var Board = require('./Board.js');
+var Piece = require('./Piece.js');
+
 class MemoryGame {
     constructor(ID, playerName, numberPlayer, XAxis, YAxis) {
-        this.numberPlayerXYAxis = new Array();
-        this.numberPlayerXYAxis.push(numberPlayer, XAxis, YAxis);
-        this.playerOne = playerName //ToDo : Change this. The Map isn't showing, Ask them might help Z.
         this.gameID = ID;
-        this.showSuccess = true;
-        this.showFailure = false;
+        this.playerOne = playerName;
+        this.playerTwo = '';
+        this.playerThree = '';
+        this.playerFour = '';
+        this.arrayPlayers = [];
+        this.arrayPlayers.push(this.playerOne);
+        this.arrayScore = [];
+        this.arrayScore.push(0);
+        this.numberPlayerXYAxis = [];
+        this.numberPlayerXYAxis.push(numberPlayer, XAxis, YAxis);
+        this.flippedPieces = [];
         this.successMessage = '';
         this.failMessage = '';
-        this.currentValue = 1; //Current player playing.
         this.currentMove = 0;
-        this.gameEnded = false;
+        this.winner = 0;
+        this.currentPlayerPlaying = 1; //Current player playing.
+        this.timer = null;
+        this.possibleDifficulty = null;
+        this.isGameEnded = false;
+        this.isGameStarted = false;
+        this.showFailure = false;
+        this.showSuccess = true;
 
         //Creation of Board
-        if(XAxis == undefined && YAxis == undefined)
+        if(XAxis == 0 || YAxis == 0)
             this.boardClass = new Board(playerName,numberPlayer);
         else
             this.boardClass = new Board(playerName,numberPlayer, XAxis, YAxis);
-
-        this.playersHash = this.createPlayersHash(playerName);
-        this.flippedPieces = new Array();
-        this.startGame = true;
-        this.timer = null;
-        this.possibleDifficulty = null;
-    }
-
-    /*Creates the Players Hash, containing :
-     * Key : Integer, Starting from 0, which is Player 1, till 3, Player 4.
-     * Value : A Array, Which contains :
-        * Position 0 : NameOfThePlayer - Name of the Player. Default is "Player " + (Key+1)
-        * Position 1 :           Score - Score of the Player. Starts on 0.
-     */
-    createPlayersHash(playerName){
-        let playersHash = new Map();
-        let arr = [];
-        for(let i = 0; i < this.numberPlayerXYAxis[0] ; i++){
-            if(i == 0){
-                arr.push(playerName);
-            }else{
-                arr.push("Player " + (i+1));
-            }
-            arr.push(0);
-            playersHash.set(i, arr);
-            arr = new Array();
-        }
-        return playersHash;
-    }
-
-    getFirstPlayer(){
-        console.log(this.playersHash.get(0)[0]);
-        return this.playersHash.get(0)[0];
     }
 
     //Join for everyone. Should never be called outside.
     join(playerName){
-        let check = 0;
-        for(let i = 1; i < this.playersHash.size; i++){
-            let playerJoining = this.playersHash.get(i);
-            if(playerJoining[0] == 'Player ' + i+1){
-                playerJoining[0] = playerName;
-                check = i;
+        if(this.arrayPlayers.size == this.numberPlayerXYAxis[0])
+            return "Max Size.";
+        for(let i = 0 ; i < this.arrayPlayers.length; i++) {
+            if (this.arrayPlayers[i] == playerName)
+                return "This already exists.";
+        }
+
+        this.arrayPlayers.push(playerName);
+        this.arrayScore.push(0);
+
+        switch(this.arrayPlayers.length){
+            case 2:
+                this.playerTwo = playerName;
                 break;
-            }
+            case 3:
+                this.playerThree = playerName;
+                break;
+            case 4:
+                this.playerFour = playerName;
+                break;
+            default:
+                return "Error";
         }
-        if(check == this.playersHash.size){
-            this.startGame = true;
+        if(this.arrayPlayers.length == this.numberPlayerXYAxis[0]) {
+            this.isGameStarted = true;
         }
+        return "OK";
     }
 
     //Join for a Player. this function should be called instead of *join()*
     joinPlayer(playerName){
-        this.join(playerName);
+        return this.join(playerName);
     }
 
     //Join for a Bot. this function should be called instead of *join()*
     joinBot(difficulty){
         this.possibleDifficulty = difficulty;
-        this.join("Bot");
+        return this.join("Bot");
     }
 
     //Shows the image on each square of the board. Check if it needs to be used.
@@ -86,44 +83,83 @@ class MemoryGame {
         return this.boardClass.board[key].imagePath();
     }
 
-    //Click a Piece on the Board
-    clickPiece(piece) {
+    /* Click a Piece on the Board
+     * Returns:
+     * 1 -- If it is not possible to press
+     * 2 -- If the Player can play again
+     * 3 -- If the Game is complete
+     * 4 -- Default Return
+     */
+    clickPieceM(piece) {
+        if(!piece.isHidden) {
+            if (this.isGameEnded)
+                if (!this.isGameStarted)
+                    return;
+        }
 
-        //If the game already ended OR if the piece is already clicked/Opened, then do nothing.
-        if(!piece.isHidden || this.gameEnded || this.startGame) return;
-        
-        piece.flip();
+        //ToDo: piece.flip();
+        piece.isHidden = !piece.isHidden;
+        piece.wasOpen = true;
 
         this.flippedPieces.push(piece); //This "flippedPieces" is a way to see both clicked pieces. (Push adds a node)
-        
+
         this.currentMove++; //Counter, for the number of moves each player has.
 
         //If the player only played ONE piece, we need to let him play the other!
         if(this.currentMove != 2){
-            //Nothing happens! The current player can play another piece!            
+            //Nothing happens! The current player can play another piece!
+            return piece;
         }else{
             //We need to check now if there is 2 equal pieces.
-            this.checkValuesAreEqual();
+            console.log("I call checkValuesAreEqual to the Stand.", this.flippedPieces);
+            this.checkValuesAreEqualM();
 
             //Reset Array and Counter
             //this.flippedPieces = [];
             this.currentMove = 0;
 
             //On the end, we need to check if the game is complete!
-            if(this.isBoardComplete()){
-                this.gameEnded = true;
+            console.log("I Passed here.", this.boardClass.board);
+            if(this.isBoardCompleteM()) {
+                this.isGameEnded = true;
                 this.showSuccess = true;
-                let winnerNumber = 0;
-                let winnerName = 0;
-                this.playersHash.forEach(function (item, key, mapObj){
-                    if(winnerNumber < item[1]){
-                        winnerNumber = item[1];
-                        winnerName = item[0];
-                    }        
-                });
-                this.successMessage = "Winner is '" + winnerName + "' With " + winnerNumber + "Points!";
+                let playerOrdered = new Array();
+                playerOrdered = this.arrayPlayers;
+                let scoreOrdered = new Array();
+                scoreOrdered = this.arrayScore;
+                let auxVariable;
+                do {         //Bubble Sort
+                    auxVariable = false;
+                    for (let j = 0; j < scoreOrdered.length - 1; j++) {
+                        if (scoreOrdered[j] < scoreOrdered[j+1]) {
+                            let tempScore = scoreOrdered[j];
+                            scoreOrdered[j] = scoreOrdered[j + 1];
+                            scoreOrdered[j + 1] = tempScore;
+
+                            let tempPlayer = playerOrdered[j];
+                            playerOrdered[j] = playerOrdered[j + 1];
+                            playerOrdered[j + 1] = tempPlayer;
+
+                            auxVariable = true;
+                        }
+                    }
+                } while (auxVariable);
+
+                if (scoreOrdered[0] == scoreOrdered[1]){
+                    this.winner = 0;
+                    this.successMessage = "There has been a Tie.";
+                }
+
+                for(let i = 0; i < this.arrayPlayers; i++) {
+                    if (playerOrdered[0] == this.arrayPlayers[i]) {
+                        this.successMessage = "Winner is '" + playerOrdered[0] + "' With " + scoreOrdered[0] + "Points!";
+                        this.winner = i+1;
+                        break;
+                    }
+                }
             }
         }
+        return piece;
     }
 
     //Creating a new instance of the game. PROB won't be used!.
@@ -133,24 +169,32 @@ class MemoryGame {
         this.showFailure = false;
         this.successMessage = '';
         this.failMessage = '';
-        this.currentValue = 1;
+        this.currentPlayerPlaying = 1;
         this.gameEnded = false;
-        this.startGame = false;
+        //this.startGame = false;
+        this.flippedPieces = [];
+        this.currentMove = 0;
+        for(let i = 0; i < this.arrayScore.length; i++)
+            this.arrayScore[i] = 0;
+
+        this.winner = 0;
+        this.currentPlayerPlaying = 1; //Current player playing.
+        this.timer = null;
+        this.isGameEnded = false;
+        this.isGameStarted = false;
     }
 
     //Function that checks if the two pieces on "flippedPieces" are equal.
-    checkValuesAreEqual(){
+    checkValuesAreEqualM(){
         //They are equal
-        if(this.flippedPieces[0].trueValue === this.flippedPieces[1].trueValue){
 
-            //Lets set the playersHash. Set receives the index , and then the value to change.
-            let arrayAux = new Array();  // The Map : PlayerName and gameValue 
-            arrayAux.push(this.playersHash.get(this.currentValue - 1)[0]); //Lets add the Name to the array
-            arrayAux.push(this.playersHash.get(this.currentValue - 1)[1] + 1); //Lets add the Result to the array
-            this.playersHash.set(this.currentValue - 1, arrayAux);
+        if(this.flippedPieces[0].trueValue == this.flippedPieces[1].trueValue){
+
+            this.arrayScore[this.currentPlayerPlaying-1] = this.arrayPlayers[this.currentPlayerPlaying-1]+1;
 
             //The player need to play again!
-            this.successMessage = 'Player '+ this.playersHash.get(this.currentValue - 1)[0]+' has Played. Play again!';
+            //this.successMessage = 'Player '+ this.playersHash.get(this.currentPlayerPlaying - 1)[0]+' has Played. Play again!';
+            this.successMessage = 'Player ' + this.arrayPlayers[this.currentPlayerPlaying - 1]+ ' has Played. Play again!';
             this.showSuccess = true;
 
             //Reset Array and Counter
@@ -158,39 +202,44 @@ class MemoryGame {
             this.currentMove = 0;
 
             //If its the bots turn, then play again
-            if(this.currentValue === 2 && this.playersHash.get(1)[0] === 'Bot'){
+            if(this.currentPlayerPlaying == 2 && this.arrayPlayers[1] == 'Bot'){
                 this.playBot(this.possibleDifficulty);
             }
+
+            console.log("1---");
+            return;
 
         //If they aren't, we need to re-change to the original Board!
         }else{
             this.timer = setTimeout(() => {
+                this.clearTimer();
 
-            this.clearTimer();
+                this.flippedPieces[0].isHidden = !this.flippedPieces[0].isHidden; //ToDo:Flip.
+                this.flippedPieces[0].wasOpen = true;
+                this.flippedPieces[1].isHidden = !this.flippedPieces[1].isHidden; //ToDo:Flip.
+                this.flippedPieces[1].wasOpen = true;
 
-            this.flippedPieces[0].flip();
-            this.flippedPieces[1].flip();
+                //Lets change the player.
+                this.successMessage = this.arrayPlayers[this.currentPlayerPlaying-1] + ' has Played';
+                this.showSuccess = true;
+                this.currentPlayerPlaying = this.currentPlayerPlaying % this.arrayPlayers.size + 1;
 
-            //Lets change the player.
-            this.successMessage = 'Player '+ this.currentValue +' has Played';
-            this.showSuccess = true;
-            this.currentValue = this.currentValue % this.playersHash.size + 1;
+                //Reset Array and Counter
+                this.flippedPieces = [];
+                this.currentMove = 0;
 
-            //Reset Array and Counter
-            this.flippedPieces = [];
-            this.currentMove = 0;
-
-            if(this.currentValue === 2 && this.playersHash.get(1)[0] === 'Bot'){
-                this.playBot(this.possibleDifficulty);
-            }
-        }, 1000);
+                if(this.currentPlayerPlaying == 2 && this.arrayPlayers[this.currentPlayerPlaying-1] == 'Bot'){
+                    this.playBot(this.possibleDifficulty);
+                }
+                console.log("2");
+            }, 1000);
         }
     }
 
     //Returns True if the Board is completely turned Over, False otherwise.
-    isBoardComplete(){
+    isBoardCompleteM(){
         this.boardClass.board.forEach(function(element) {
-            if (element.isHidden === true) {
+            if (element.isHidden == true) {
                 return false;
             }
         });
@@ -212,7 +261,7 @@ class MemoryGame {
                 this.playBotDifficultyFour();
                 break;
             default:
-                break;     
+                break;
         }
     }
 
@@ -236,7 +285,7 @@ class MemoryGame {
         let boardArray = new Array();
         let boardOpenArray = new Array();
         for(let i = 0; i < this.boardClass.board.length; i++){
-            if(this.boardClass.board[i].isHidden) boardArray.push(this.boardClass.board[i]); 
+            if(this.boardClass.board[i].isHidden) boardArray.push(this.boardClass.board[i]);
         }
         if(boardArray.length == 0) return;
         if(boardArray.length == 2){
@@ -255,7 +304,6 @@ class MemoryGame {
                         //Means that there is two pieces that were once opened and they have equal trueValue
                         this.clickPiece(boardOpenArray[i]);
                         this.clickPiece(boardOpenArray[j]);
-                        console.log("there is 2 pieces.");
                         return;
                     }
                 }
@@ -274,7 +322,7 @@ class MemoryGame {
         let boardArray = new Array();
         let boardOpenArray = new Array();
         for(let i = 0; i < this.boardClass.board.length; i++){
-            if(this.boardClass.board[i].isHidden) boardArray.push(this.boardClass.board[i]); 
+            if(this.boardClass.board[i].isHidden) boardArray.push(this.boardClass.board[i]);
         }
         if(boardArray.length == 0) return;
         if(boardArray.length == 2){
@@ -294,7 +342,6 @@ class MemoryGame {
                         //Means that there is two pieces that were once opend and they have equal trueValue
                         this.clickPiece(boardOpenArray[i]);
                         this.clickPiece(boardOpenArray[j]);
-                        console.log("there is 2 pieces.");
                         return;
                     }
                 }
@@ -314,7 +361,7 @@ class MemoryGame {
             }
         }
 
-        //There isnt any piece? Ok... randomize.
+        //There isn't any piece? Ok... randomize.
         do{ //Play 2nd piece
             playTwo = Math.floor(Math.random() * boardArray.length);
         }while(!boardArray[playTwo].isHidden || playOne == playTwo);
@@ -328,11 +375,11 @@ class MemoryGame {
         let boardOpenArray = new Array();
         let boardNotPlayed = new Array();
         for(let i = 0; i < this.boardClass.board.length; i++){
-            if(this.boardClass.board[i].isHidden) boardArray.push(this.boardClass.board[i]); 
+            if(this.boardClass.board[i].isHidden) boardArray.push(this.boardClass.board[i]);
         }
 
         if(boardArray.length == 0) return;
-        
+
         if(boardArray.length == 2){
             this.clickPiece(boardArray[0]);
             this.clickPiece(boardArray[1]);
@@ -363,13 +410,13 @@ class MemoryGame {
 
         for(let i = 0; i < boardOpenArray.length; i++){
             if(boardNotPlayed[playOne].trueValue == boardOpenArray[i].trueValue && boardNotPlayed[playOne] != boardOpenArray[i]){
-                //If there is opend piece with the same value, then pick it as well.
+                //If there is opened piece with the same value, then pick it as well.
                 this.clickPiece(boardOpenArray[i]);
                 return;
             }
         }
 
-        //There isnt any piece? Ok... randomize.
+        //There isn't any piece? Ok... randomize.
         do{ //Play 2nd piece
             playTwo = Math.floor(Math.random() * boardNotPlayed.length);
         }while(!boardNotPlayed[playTwo].isHidden || playOne == playTwo);
@@ -382,100 +429,5 @@ class MemoryGame {
         this.timer = null;
     }
 }
-
-class Board{
-    constructor(playerName, numberOfPlayers, xAxis, yAxis){
-        this.board = [];
-        this.numberOfPlayers = numberOfPlayers;
-        /*this.playersHash = new Map();
-
-        let arr = [];
-        for(let i = 0; i < numberOfPlayers ; i++){
-            if(i == 0){
-                arr.push(playerName);
-            }else{
-                arr.push("Player " + (i+1));
-            }
-            arr.push(0);
-            this.playersHash.set(i, arr);
-            arr = new Array();
-        }*/
-
-        if (xAxis == undefined){ // We don't want to go for custom board!
-            this._constructWithNumberOfPlayers(numberOfPlayers);
-        }else{
-            this._constructWithXAxisAndYAxis(numberOfPlayers, xAxis, yAxis);
-        }
-    }
-
-    _constructWithNumberOfPlayers(numberOfPlayers){
-        if (numberOfPlayers == 1 || numberOfPlayers == 2){ //Board needs to be 4x4
-            this.board = this.createBoard(4, 4);
-        } else if(numberOfPlayers == 3){ //Board needs to be 4*6
-            this.board = this.createBoard(4, 6);
-        } else if(numberOfPlayers == 4){ //Board needs to be 6*6
-            this.board = this.createBoard(6, 6);
-        }else{
-            return;
-        }
-    }
-
-    _constructWithXAxisAndYAxis(numberOfPlayers, xAxis, yAxis){
-        if(xAxis*yAxis%2 === 0){
-            this.board = this.createBoard(xAxis, yAxis);
-        }else if(xAxis*yAxis > 80){
-            this.board = this.createBoard(8,10);
-        }else{
-            return; //Error
-        }
-    }
-
-    createBoard(x, y){
-
-        let size = x*y;
-        let board = new Array(size);
-
-        //We have the board now. We need to populate it with the Pieces.
-        let trueValue = 0;
-        let counter = 0;
-        for(let i = 0; i < size; i++){
-            board[i] = new Piece(trueValue);
-            counter++;
-            if(counter === 2) { counter=0; trueValue++; }
-        }
-        for(let i = 0; i < 250 ; i++){
-            let positionOne = Math.floor(Math.random() * (size));
-            let positionTwo = Math.floor(Math.random() * (size));
-
-            let temp = board[positionOne];
-            board[positionOne] = board[positionTwo];
-            board[positionTwo] = temp;
-        }
-        return board;
-    }
-}
-
-class Piece{
-        constructor(trueValue){
-            this.isHidden = true; //true = Hidden.
-            this.wasOpen = false; //If it was opened.
-            this.trueValue = trueValue; //Its true value
-            this.pathHidden = 'img/' + 'hidden' + '.png';
-            this.pathFlip = 'img/' + String(this.trueValue) + '.png';
-        }
-
-        //To show the image on each square of the board.
-        imagePath() {
-            if(this.isHidden == true)
-                return this.pathHidden;
-            else
-                return this.pathFlip;
-        }
-
-        flip(){
-            this.isHidden = !this.isHidden;
-            this.wasOpen = true;
-        }
-    }
 
 module.exports = MemoryGame;

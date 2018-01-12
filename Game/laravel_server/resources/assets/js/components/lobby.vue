@@ -10,7 +10,10 @@
 	    <tbody>
 	        <tr v-for="game in games"  :key="game.gameID">
 	            <td>{{ game.gameID }}</td>
-	            <td>{{ game.playerOne}}</td>
+				<td v-if="game.arrayPlayers[0] != undefined" >{{ game.playerOne }}</td>
+				<td v-if="game.arrayPlayers[1] != undefined" >{{ game.playerTwo }}</td>
+				<td v-if="game.arrayPlayers[2] != undefined" >{{ game.playerThree }}</td>
+				<td v-if="game.arrayPlayers[3] != undefined" >{{ game.playerFour }}</td>
 	            <td>
 	                <a class="btn btn-xs btn-primary" v-on:click.prevent="join(game)">Join</a>
 	            </td>

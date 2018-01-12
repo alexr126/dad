@@ -1,6 +1,8 @@
 /*jshint esversion: 6 */
 
 var MemoryGame = require('./gamemodel.js');
+var Board = require('./Board.js');
+var Piece = require('./Piece.js');
 
 class GameList {
 	constructor() {
@@ -19,12 +21,11 @@ class GameList {
     	let game = new MemoryGame(this.contadorID, playerName, numberPlayer, XAxis, YAxis);
     	this.contadorID = this.contadorID+1;
 
-        game.playerSockets = new Map();
-		let array = new Array();
-		array.push(socketID, playerName);
-        game.playerSockets.set(game.playerSockets.size, array); //game.playerSockets.size *WILL* start at 0.
+        game.playerSockets = new Array();
+        game.playerSockets.push(socketID);
+
         this.games.set(game.gameID, game);
-        console.log("---->game.playerSockets : ", game.playerSockets)
+
         return game;
     }
 
@@ -35,17 +36,16 @@ class GameList {
         if (game == null)
             return null;
 
-        if (game.playersHash.size == game.playerSockets.size){
-            alert("Can't add more players");
-            return;
+        if (game.playerSockets.length == game.numberPlayerXYAxis[0]){
+            return "Can't add more players";
         }
 
-        let array = new Array();
-        array.push(socketID, playerName);
-        game.playerSockets.set(game.playerSockets.size, array);
+        if(game.joinPlayer(playerName) == "OK"){
+            game.playerSockets.push(socketID);
+            return game;
+        }
 
-        game.joinPlayer(playerName);
-        return game;
+        return "Error On JoinGamePlayer!";
     }
 
     //Join for a Bot.
@@ -55,17 +55,17 @@ class GameList {
 		if(game == null)
 			return null;
 
-        if (game.playersHash.size == game.playerSockets.size){
-            alert("Can't add more bots");
+        if (game.playerSockets.length == game.numberPlayerXYAxis[0]){
+            return "Can't add more bots";
             return;
         }
 
-		let array = new Array();
-		array.push(0, "Bot");
-		game.playerSockets.set(game.playerSockets.size, array);
+        if(game.joinBot(difficulty) == "OK"){
+            game.playerSockets.push(0);
+            return game;
+        }
 
-		game.joinBot(difficulty);
-		return game;
+		return "Error On JoinGameBot!";
 	}
 
 	//Destroy a game.
@@ -75,27 +75,28 @@ class GameList {
     	if (game == null)
     		return null;
 
-    	//If we have a bot
-		if(game.playerSockets.get(1)[1] === "Bot"){ //Remember. HashMap<value, [socketID, PlayerName]>
-            if (game.playerSockets.get(0)[0] == socketID) {
-                game.playerSockets.set(0, "");
+        //If we have a Bot
+        if(game.playerSockets[1] == "Bot"){
+            if (game.playerSockets[0] == socketID) {
+                game.playerSockets[0] = "";
                 this.games.delete(gameID);
                 return;
             }
             return game;
         }
+
         //If we have real players
-		for (let i = 0; i < game.playerSockets.size; i++) {
-			if (game.playerSockets.get(i)[0] == socketID) {
-				game.playerSockets.get(i)[1] = "";
-				break;
-			}
-		}
+        for (let i = 0; i < game.playerSockets.length; i++) {
+            if (game.playerSockets[i] == socketID) {
+                game.playerSockets[i] = "";
+                break;
+            }
+        }
 
 		//If all players left, then delete the game.
-        for(let i = 0; i < game.playerSockets.size; i++) {
-            if (!(game.playerSockets.get(i)[1] == "")) {
-				return game;
+        for(let i = 0; i < game.playerSockets.length; i++) {
+            if (!(game.playerSockets[i] == "")) {
+                return game;
             }
         }
 
@@ -107,14 +108,11 @@ class GameList {
     getConnectedGamesOf(socketID) {
     	let games = [];
     	for(let i = 0; i < this.games.size; i++) {
-    	    let game = this.games.get(i);
-            for (let j = 0; j < game.playerSockets.size; j++) {
-	            if (game.playerSockets.get(j)[0] == socketID) {
+            let game = this.games.get(i);
+            for (let j = 0; j < game.playerSockets.length; j++)
+                if (game.playerSockets[j] == socketID)
                     games.push(game);
-                    break;
-                }
-			}
-		}
+        }
 		return games;
     }
 
@@ -123,15 +121,12 @@ class GameList {
         let games = [];
         for(let i = 0; i < this.games.size; i++) {
             let game = this.games.get(i);
-            if(game.playerSockets.size == game.playersHash.size) {} //Its already full
-            else {
-                for (let j = 0; j < game.playerSockets.size; j++) {
-                    if (game.playerSockets.get(j)[0] != socketID) {
+            if(game.playerSockets.length == game.numberPlayerXYAxis[0]) {} //Its already full
+            else
+                for (let j = 0; j < game.playerSockets.length; j++)
+                    if (game.playerSockets[i] != socketID)
                         if (!games.includes(game))
                             games.push(this.games.get(i));
-                    }
-                }
-            }
         }
         return games;
     }
