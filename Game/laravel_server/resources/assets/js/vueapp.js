@@ -40,19 +40,18 @@ const router = new VueRouter({
   routes:routes
 });
 
-var authToken;
 router.beforeEach(
   (to, from, next) =>{
     if(to.meta.forVisitors){
-      authToken = localStorage.getItem('token');
-      if(authToken != null){
+      this.userToken = localStorage.getItem('token');
+      if(this.userToken != null){
         next({
           path: '/users'
         })    
       }else next();
       }else if(to.meta.requireAuth){
-        authToken = localStorage.getItem('token');
-        if(authToken == null){
+        this.userToken = localStorage.getItem('token');
+        if(this.userToken == null){
           next({
           path: '/login'
         })    
@@ -65,6 +64,7 @@ const app = new Vue({
   data:{
     player1:undefined,
     player2: undefined,
+    userToken: localStorage.getItem('token')
   }
 }).$mount('#app');
 

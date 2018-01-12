@@ -3,9 +3,11 @@
 @section('title', 'Memory Game Admin')
 
 @section('content')
-    <logout></logout>
-    <router-link to="/users">Users</router-link>
-    <router-link to="/images">Images</router-link>
+    <div>
+        <logout></logout>
+        <router-link to="/users">Users</router-link>
+        <router-link to="/images">Images</router-link>
+    </div>
     <router-view></router-view>
     <!--
     <fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button>
