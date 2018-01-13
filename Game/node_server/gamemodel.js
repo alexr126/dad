@@ -134,11 +134,11 @@ class MemoryGame {
     //Function that checks if the two pieces on "flippedPieces" are equal.
     checkValuesAreEqualM(){
         //They are equal
-
+        console.log(this.flippedPieces);
         let pieceOne = this.boardClass.board[this.flippedPieces[0]];
         let pieceTwo = this.boardClass.board[this.flippedPieces[1]];
 
-        if (pieceTwo.trueValue == pieceOne.trueValue){
+        if (pieceOne.trueValue == pieceTwo.trueValue){
 
             this.arrayScore[this.currentPlayerPlaying-1] = this.arrayScore[this.currentPlayerPlaying-1]+1;
 
@@ -194,7 +194,9 @@ class MemoryGame {
     }
 
     getFinalComplete(){
+        console.log("Here1");
         if(this.isBoardCompleteM()) {
+            console.log("Here1");
             this.isGameEnded = true;
             this.showSuccess = true;
             let playerOrdered = new Array();
@@ -227,10 +229,11 @@ class MemoryGame {
                 if (playerOrdered[0] == this.arrayPlayers[i]) {
                     this.successMessage = "Winner is '" + playerOrdered[0] + "' With " + scoreOrdered[0] + "Points!";
                     this.winner = i + 1;
+                    console.log(this.successMessage);
                     break;
                 }
             }
-            return true;
+            return this;
         }
         return false
     }
@@ -238,17 +241,13 @@ class MemoryGame {
     playBot(difficulty){
         switch(difficulty){
             case 1:
-                this.playBotDifficultyOne();
-                break;
+                return this.playBotDifficultyOne();
             case 2:
-                this.playBotDifficultyTwo();
-                break;
+                return this.playBotDifficultyTwo();
             case 3:
-                this.playBotDifficultyThree();
-                break;
+                return this.playBotDifficultyThree();
             case 4:
-                this.playBotDifficultyFour();
-                break;
+                return this.playBotDifficultyFour();
             default:
                 break;
         }
@@ -266,6 +265,7 @@ class MemoryGame {
         }while(playOne == playTwo || !this.boardClass.board[boardArray[playOne]].isHidden || !this.boardClass.board[boardArray[playTwo]].isHidden);
         this.clickPieceM(boardArray[playOne]);
         this.clickPieceM(boardArray[playTwo]);
+        console.log(this.checkValuesAreEqualM());
         return this.checkValuesAreEqualM();
     }
 
@@ -280,7 +280,7 @@ class MemoryGame {
         if(boardArray.length == 2){
             this.clickPieceM(boardArray[0]);
             this.clickPieceM(boardArray[1]);
-            return;
+            return this.checkValuesAreEqualM();
         }
 
         for(let i = 0; i < boardArray.length; i++){
@@ -294,7 +294,7 @@ class MemoryGame {
                         //Means that there is two pieces that were once opened and they have equal trueValue
                         this.clickPieceM(boardOpenArray[i]);
                         this.clickPieceM(boardOpenArray[j]);
-                        return;
+                        return this.checkValuesAreEqualM();
                     }
                 }
             }
@@ -305,6 +305,7 @@ class MemoryGame {
         }while(playOne == playTwo || !this.boardClass.board[boardArray[playOne]].isHidden || !this.boardClass.board[boardArray[playTwo]].isHidden);
         this.clickPieceM(boardArray[playOne]);
         this.clickPieceM(boardArray[playTwo]);
+        return this.checkValuesAreEqualM();
     }
 
     playBotDifficultyThree(){
@@ -318,7 +319,7 @@ class MemoryGame {
         if(boardArray.length == 2){
             this.clickPieceM(boardArray[0]);
             this.clickPieceM(boardArray[1]);
-            return;
+            return this.checkValuesAreEqualM();
         }
 
         for(let i = 0; i < boardArray.length; i++){
@@ -332,7 +333,7 @@ class MemoryGame {
                         //Means that there is two pieces that were once opened and they have equal trueValue
                         this.clickPieceM(boardOpenArray[i]);
                         this.clickPieceM(boardOpenArray[j]);
-                        return;
+                        return this.checkValuesAreEqualM();
                     }
                 }
             }
@@ -348,7 +349,7 @@ class MemoryGame {
                                     && boardArray[playOne] != boardOpenArray[i]){
                 //If there is opened piece with the same value, then pick it as well.
                 this.clickPieceM(boardOpenArray[i]);
-                return;
+                return this.checkValuesAreEqualM();
             }
         }
 
@@ -357,7 +358,7 @@ class MemoryGame {
             playTwo = Math.floor(Math.random() * boardArray.length);
         }while(!this.boardClass.board[boardArray[playTwo]].isHidden || playOne == playTwo);
         this.clickPieceM(boardArray[playTwo]);
-        return;
+        return this.checkValuesAreEqualM();
     }
 
     playBotDifficultyFour(){
@@ -374,7 +375,7 @@ class MemoryGame {
         if(boardArray.length == 2){
             this.clickPieceM(boardArray[0]);
             this.clickPieceM(boardArray[1]);
-            return;
+            return this.checkValuesAreEqualM();
         }
 
         for(let i = 0; i < boardArray.length; i++){
@@ -390,7 +391,7 @@ class MemoryGame {
                         //Means that there is two pieces that were once opened and they have equal trueValue
                         this.clickPieceM(boardOpenArray[i]);
                         this.clickPieceM(boardOpenArray[j]);
-                        return;
+                        return this.checkValuesAreEqualM();
                     }
                 }
             }
@@ -405,7 +406,7 @@ class MemoryGame {
                                 && boardNotPlayed[playOne] != boardOpenArray[i]){
                 //If there is opened piece with the same value, then pick it as well.
                 this.clickPieceM(boardOpenArray[i]);
-                return;
+                return this.checkValuesAreEqualM();
             }
         }
 
@@ -414,7 +415,7 @@ class MemoryGame {
             playTwo = Math.floor(Math.random() * boardNotPlayed.length);
         }while(!this.boardClass.board[boardNotPlayed[playTwo]].isHidden || playOne == playTwo);
         this.clickPieceM(boardNotPlayed[playTwo]);
-        return;
+        return this.checkValuesAreEqualM();
     }
 
     clearTimer(){

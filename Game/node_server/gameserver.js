@@ -137,52 +137,77 @@ io.on('connection', function (socket) {
         }
 
         if(game.currentMove == 2){
-            console.log("I'm on second move.");
+            console.log("Its me! I'm on second move.");
             if(!game.checkValuesAreEqualM()){
-                console.log("I didn't choose equal.");
-                const timer = setTimeout(() => {
-                    console.log("I did enter Timer.");
+                console.log("Its me! I didn't choose equal.");
+                const timerA = setTimeout(() => {
+                    console.log("Its me! I did enter Timer.1");
                     game.hideClickedPieces();
                     io.to(game.gameID).emit('game_changed', game);
+                    if(game.currentPlayerPlaying == 2 && game.arrayPlayers[game.currentPlayerPlaying - 1] == "Bot"){
+                        //Bot time.
+                        console.log("Bot Time!");
+                        io.to(game.gameID).emit('play_bot_again', game);
+                        //game.getFinalComplete();
+                    }
                 }, 300);
             }
+        } else {
+            //game.getFinalComplete();
+            return;
+        }
+    });
+
+    socket.on('play_that_bot', function (data) {
+        let game = games.gameByID(data.gameID);
+
+        if (game == null)
+            return;
+        if(game.isGameEnded == true){
+            return;
+        }
+        if(game.currentPlayerPlaying == 2 && game.arrayPlayers[game.currentPlayerPlaying - 1] == "Bot") {
+            if(game.playBot(game.possibleDifficulty) == false){
+                console.log("Bot : I got false");
+                io.to(game.gameID).emit('game_changed', game);
+                console.log("Bot : He didn't choose equal.");
+                const timerB = setTimeout(() => {
+                    console.log("Bot : I did enter Timer.2");
+                    game.hideClickedPieces();
+                    console.log("Bot : I Hidden Pieces. Going to change.");
+                    io.to(game.gameID).emit('game_changed', game);
+                    return;
+                }, 300);
+            }else{
+                io.to(game.gameID).emit('game_changed', game);
+                console.log("Bot : I Managed to Win! Go again.");
+                if(game.getFinalComplete() == false) {
+                    io.to(game.gameID).emit('play_bot_again', game);
+                }else{
+                    game = game.getFinalComplete();
+                }
+                io.to(game.gameID).emit('game_changed', game);
+                return;
+            }
         }else {
+            console.log("ASD")
+            if(!game.getFinalComplete() == false) {
+                game = game.getFinalComplete();
+            }
+            io.to(game.gameID).emit('game_changed', game);
+            return;
+        }
+    })
+
+    socket.on('check_if_finished', function (data) {
+        let game = games.gameByID(data.gameID);
+
+        if (game == null)
+            return;
+        if(game.isGameEnded == true){
             return;
         }
 
-        /*if(game.currentMove == 2 && !game.checkValuesAreEqualM()){
-            const timerA = setTimeout(() => {
-                console.log("I entered on A.");
-                game.hideClickedPieces();
-                io.to(game.gameID).emit('game_changed', game);
-
-                if(game.currentPlayerPlaying == 2 && game.arrayPlayers[game.currentPlayerPlaying -1 ] == "Bot") {
-                    console.log("BB");
-                    const timerB = setTimeout(() => {
-                        do{
-                            console.log("I entered on B.");
-                            // game.hideClickedPieces();
-                            if(!game.playBot(this.difficulty)){
-                                const timerC = setTimeout(() => {
-                                    console.log("I entered on C.");
-                                    this.hideClickedPieces();
-                                    console.log("I Played the BOT.");
-                                    io.to(game.gameID).emit('game_changed', game);
-                                }, 300);
-                            }
-                        }while (game.currentPlayerPlaying == 2 && game.arrayPlayers[game.currentPlayerPlaying - 1] == "Bot");
-                    }, 300);
-                }else{
-                    game.hideClickedPieces();
-                    io.to(game.gameID).emit('game_changed', game);
-                }
-                    return;
-                }, 300);
-        }else{
-            game.getFinalComplete();
-            return;
-        }*/
-    });
-
-
+        game.getFinalComplete();
+    })
 });
