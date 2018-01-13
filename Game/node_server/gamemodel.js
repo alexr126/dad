@@ -89,70 +89,25 @@ class MemoryGame {
      * False : Case something went bad
      */
     clickPieceM(index) {
+        if (this.currentMove != 2) {
+            let piece = this.boardClass.board[index];
 
-        let piece = this.boardClass.board[index];
+            if (!piece.isHidden) {
+                if (this.isGameEnded)
+                    if (!this.isGameStarted)
+                        return false;
+            }
 
-        if(!piece.isHidden) {
-            if (this.isGameEnded)
-                if (!this.isGameStarted)
-                    return false;
-        }
+            piece.flip();
 
-        piece.flip();
+            this.flippedPieces.push(index); //This "flippedPieces" is a way to see both clicked pieces. (Push adds a node)
 
-        this.flippedPieces.push(index); //This "flippedPieces" is a way to see both clicked pieces. (Push adds a node)
+            this.currentMove++; //Counter, for the number of moves each player has.
 
-        this.currentMove++; //Counter, for the number of moves each player has.
-
-        //If the player only played ONE piece, we need to let him play the other!
-        if(this.currentMove != 2){
-            //Nothing happens! The current player can play another piece!
             this.boardClass.board[index] = piece;
             return true;
-        }else{
-            //We need to check now if there is 2 equal pieces.
-            if(this.checkValuesAreEqualM()){
-                //Reset Array and Counter
-                if(this.isBoardCompleteM()) {
-                    this.isGameEnded = true;
-                    this.showSuccess = true;
-                    let playerOrdered = new Array();
-                    playerOrdered = this.arrayPlayers;
-                    let scoreOrdered = new Array();
-                    scoreOrdered = this.arrayScore;
-                    let auxVariable;
-                    do {         //Bubble Sort
-                        auxVariable = false;
-                        for (let j = 0; j < scoreOrdered.length - 1; j++) {
-                            if (scoreOrdered[j] < scoreOrdered[j+1]) {
-                                let tempScore = scoreOrdered[j];
-                                scoreOrdered[j] = scoreOrdered[j + 1];
-
-                                scoreOrdered[j + 1] = tempScore;
-                                let tempPlayer = playerOrdered[j];
-                                playerOrdered[j] = playerOrdered[j + 1];
-
-                                playerOrdered[j + 1] = tempPlayer;
-                                auxVariable = true;
-                            }
-                        }
-                    } while (auxVariable);
-                    if (scoreOrdered[0] == scoreOrdered[1]){
-                        this.winner = 0;
-                        this.successMessage = "There has been a Tie.";
-
-                    }
-                    for(let i = 0; i < this.arrayPlayers; i++) {
-                        if (playerOrdered[0] == this.arrayPlayers[i]) {
-                            this.successMessage = "Winner is '" + playerOrdered[0] + "' With " + scoreOrdered[0] + "Points!";
-                            this.winner = i+1;
-                            break;
-                        }
-                    }
-                }
-            }
-            return true;
         }
+        return false;
     }
 
     //Creating a new instance of the game. PROB won't be used!.
@@ -183,7 +138,7 @@ class MemoryGame {
         let pieceOne = this.boardClass.board[this.flippedPieces[0]];
         let pieceTwo = this.boardClass.board[this.flippedPieces[1]];
 
-        if(pieceTwo.trueValue == pieceOne.trueValue){
+        if (pieceTwo.trueValue == pieceOne.trueValue){
 
             this.arrayScore[this.currentPlayerPlaying-1] = this.arrayScore[this.currentPlayerPlaying-1]+1;
 
@@ -195,43 +150,37 @@ class MemoryGame {
             this.flippedPieces = [];
             this.currentMove = 0;
 
-            //If its the bots turn, then play again
-            if(this.currentPlayerPlaying == 2 && this.arrayPlayers[1] == 'Bot'){
-                this.playBot(this.possibleDifficulty);
-            }
+            // //If its the bots turn, then play again
+            // if(this.currentPlayerPlaying == 2 && this.arrayPlayers[1] == 'Bot'){
+            //     this.playBot(this.possibleDifficulty);
+            // }
 
             return true;
-
-        //If they aren't, we need to re-change to the original Board!
-        }else{
-            //this.timer = setTimeout(() => {
-            //      this.clearTimer();
-
-                pieceOne.flip();
-                // pieceOne.isHidden = !pieceOne.isHidden; //ToDo:Flip.
-                // pieceOne.wasOpen = true;
-                this.boardClass.board[this.flippedPieces[0]] = pieceOne;
-
-                pieceTwo.flip();
-                // this.flippedPieces[1].isHidden = !this.flippedPieces[1].isHidden; //ToDo:Flip.
-                // this.flippedPieces[1].wasOpen = true;
-                this.boardClass.board[this.flippedPieces[1]] = pieceTwo;
-
-                //Lets change the player.
-                this.successMessage = this.arrayPlayers[this.currentPlayerPlaying-1] + ' has Played';
-                this.showSuccess = true;
-                this.currentPlayerPlaying = this.currentPlayerPlaying % this.arrayPlayers.length + 1;
-
-                //Reset Array and Counter
-                this.flippedPieces = [];
-                this.currentMove = 0;
-
-                if(this.currentPlayerPlaying == 2 && this.arrayPlayers[this.currentPlayerPlaying-1] == 'Bot'){
-                    this.playBot(this.possibleDifficulty);
-                }
-            //}, 1000);
-            return false;
         }
+        return false;
+    }
+
+    hideClickedPieces(){
+
+        console.log(this.flippedPieces);
+        let pieceOne = this.boardClass.board[this.flippedPieces[0]];
+        let pieceTwo = this.boardClass.board[this.flippedPieces[1]];
+
+        pieceOne.flip();
+        this.boardClass.board[this.flippedPieces[0]] = pieceOne;
+
+        pieceTwo.flip();
+        this.boardClass.board[this.flippedPieces[1]] = pieceTwo;
+
+        //Lets change the player.
+        this.successMessage = this.arrayPlayers[this.currentPlayerPlaying-1] + ' has Played';
+        this.showSuccess = true;
+        this.currentPlayerPlaying = this.currentPlayerPlaying % this.arrayPlayers.length + 1;
+
+        //Reset Array and Counter
+        this.flippedPieces = [];
+        this.currentMove = 0;
+        return;
     }
 
     //Returns True if the Board is completely turned Over, False otherwise.
@@ -242,6 +191,48 @@ class MemoryGame {
             }
         }
         return true;
+    }
+
+    getFinalComplete(){
+        if(this.isBoardCompleteM()) {
+            this.isGameEnded = true;
+            this.showSuccess = true;
+            let playerOrdered = new Array();
+            playerOrdered = this.arrayPlayers;
+            let scoreOrdered = new Array();
+            scoreOrdered = this.arrayScore;
+            let auxVariable;
+            do {         //Bubble Sort
+                auxVariable = false;
+                for (let j = 0; j < scoreOrdered.length - 1; j++) {
+                    if (scoreOrdered[j] < scoreOrdered[j + 1]) {
+                        let tempScore = scoreOrdered[j];
+                        scoreOrdered[j] = scoreOrdered[j + 1];
+
+                        scoreOrdered[j + 1] = tempScore;
+                        let tempPlayer = playerOrdered[j];
+                        playerOrdered[j] = playerOrdered[j + 1];
+
+                        playerOrdered[j + 1] = tempPlayer;
+                        auxVariable = true;
+                    }
+                }
+            } while (auxVariable);
+            if (scoreOrdered[0] == scoreOrdered[1]) {
+                this.winner = 0;
+                this.successMessage = "There has been a Tie.";
+
+            }
+            for (let i = 0; i < this.arrayPlayers; i++) {
+                if (playerOrdered[0] == this.arrayPlayers[i]) {
+                    this.successMessage = "Winner is '" + playerOrdered[0] + "' With " + scoreOrdered[0] + "Points!";
+                    this.winner = i + 1;
+                    break;
+                }
+            }
+            return true;
+        }
+        return false
     }
 
     playBot(difficulty){
@@ -275,7 +266,7 @@ class MemoryGame {
         }while(playOne == playTwo || !this.boardClass.board[boardArray[playOne]].isHidden || !this.boardClass.board[boardArray[playTwo]].isHidden);
         this.clickPieceM(boardArray[playOne]);
         this.clickPieceM(boardArray[playTwo]);
-        return;
+        return this.checkValuesAreEqualM();
     }
 
     playBotDifficultyTwo(){

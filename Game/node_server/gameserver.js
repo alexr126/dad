@@ -136,7 +136,52 @@ io.on('connection', function (socket) {
             io.to(game.gameID).emit('game_changed', game);
         }
 
-        return;
+        if(game.currentMove == 2){
+            console.log("I'm on second move.");
+            if(!game.checkValuesAreEqualM()){
+                console.log("I didn't choose equal.");
+                const timer = setTimeout(() => {
+                    console.log("I did enter Timer.");
+                    game.hideClickedPieces();
+                    io.to(game.gameID).emit('game_changed', game);
+                }, 300);
+            }
+        }else {
+            return;
+        }
+
+        /*if(game.currentMove == 2 && !game.checkValuesAreEqualM()){
+            const timerA = setTimeout(() => {
+                console.log("I entered on A.");
+                game.hideClickedPieces();
+                io.to(game.gameID).emit('game_changed', game);
+
+                if(game.currentPlayerPlaying == 2 && game.arrayPlayers[game.currentPlayerPlaying -1 ] == "Bot") {
+                    console.log("BB");
+                    const timerB = setTimeout(() => {
+                        do{
+                            console.log("I entered on B.");
+                            // game.hideClickedPieces();
+                            if(!game.playBot(this.difficulty)){
+                                const timerC = setTimeout(() => {
+                                    console.log("I entered on C.");
+                                    this.hideClickedPieces();
+                                    console.log("I Played the BOT.");
+                                    io.to(game.gameID).emit('game_changed', game);
+                                }, 300);
+                            }
+                        }while (game.currentPlayerPlaying == 2 && game.arrayPlayers[game.currentPlayerPlaying - 1] == "Bot");
+                    }, 300);
+                }else{
+                    game.hideClickedPieces();
+                    io.to(game.gameID).emit('game_changed', game);
+                }
+                    return;
+                }, 300);
+        }else{
+            game.getFinalComplete();
+            return;
+        }*/
     });
 
 
