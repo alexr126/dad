@@ -10,11 +10,11 @@
 		</div>
 
 		<image-list :images="images" @delete-click="deleteImage" @activate-click="activateImage" 
-			@disable-click="disableImage" @message="childMessage" ref="imagesListRef">
+			@disable-click="disableImage"  @message="childMessage" ref="imagesListRef">
 		</image-list>		
 
-        <file-upload>
-        </file-upload>
+		<image-upload @upload-click="uploadImage">
+		</image-upload>
 
 	</div>				
 </template>
@@ -22,7 +22,8 @@
 <script type="text/javascript">
 
 	import ImageList from './imageList.vue';
-	import Upload from './fileUpload.vue';
+	//import Upload from './fileUpload.vue';
+	import ImageUpload from './imageUpload.vue';
 	
 	export default {
 		data: function(){
@@ -31,10 +32,18 @@
 		        showSuccess: false,
 		        successMessage: '',
 		        currentImage: null,
+		        //newImage: null,
 		        images: []
 			}
 		},
 	    methods: {
+	    	uploadImage: function(image){
+	    		//this.currentUser = null;
+	            //this.$refs.usersListRef.editingUser = null;
+	            this.showSuccess = true;
+	            this.successMessage = 'Image Uploaded';
+	            this.getImages();
+	    	},
 	        deleteImage: function(image){
 	            axios.delete('api/images/remove/'+image.id)
 	                .then(response => {
@@ -85,7 +94,8 @@
 	    },
 	    components: {
 	    	'image-list': ImageList,
-	    	'file-upload': Upload
+	    	//'file-upload': Upload
+	    	'image-upload': ImageUpload
 	    },
 	    mounted() {
 			this.getImages();

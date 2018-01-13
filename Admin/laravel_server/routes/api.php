@@ -32,6 +32,9 @@ Route::group(['middleware'=>'auth:api'], function(){
     Route::put('users/unblock/{id}', 'UserControllerAPI@unblock');
 });
 
+//Emails
+Route::post('/send', 'EmailController@send');
+
 //Images
 //Route::group(['middleware'=>'auth:api'], function(){
 	Route::get('images', 'ImageControllerAPI@getImages');
@@ -40,8 +43,8 @@ Route::group(['middleware'=>'auth:api'], function(){
     Route::put('images/disable/{id}', 'ImageControllerAPI@disable');
 	Route::post('images', 'ImageControllerAPI@store');
 	Route::delete('images/remove/{id}', 'ImageControllerAPI@delete');
-	//Route::post('images/upload', 'ImageControllerAPI@upload');
-	Route::post('/upload', 'ImageControllerAPI@upload');
+	Route::post('images/upload', 'ImageControllerAPI@upload');
+	//Route::post('/upload', 'ImageControllerAPI@upload');
 //});
 
 //Games
