@@ -98,11 +98,11 @@
 	        	axios.defaults.headers.common['Authorization'] = auth;
 	        	axios.defaults.headers.common['Accept'] = 'application/json';
 	            axios.get('api/users')
-	                .then(response=>{
-                		this.users = response.data.data; 
-	                }).catch(errors=>{
-	                	console.log(errors);
-	                });
+                .then(response=>{
+            		this.users = response.data.data; 
+                }).catch(errors=>{
+                	console.log(errors);
+                });
 			},
 			childMessage: function(message){
 				this.showSuccess = true;

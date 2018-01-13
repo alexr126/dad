@@ -21,8 +21,8 @@
 		<button class="btn btn-default" v-on:click.prevent="register()">Register</button>
 		<registration v-if="registeringUser" :email='email' :password='password' @user-registred="handleRegisterSubmit()" @cancel="cancel"></registration>
 		<br><br>
-		<div class="alert alert-danger" v-if="showSuccess">
-			<button type="button" class="close-btn" v-on:click="showSuccess=false">&times;</button>
+		<div class="alert alert-danger" v-if="showError">
+			<button type="button" class="close-btn" v-on:click="showError=false">&times;</button>
 			<strong>{{ errorMessage }}</strong>
 		</div>
 	</div>
@@ -37,7 +37,13 @@
 				password: "",
 				registeringUser: false,
 				errorMessage: "",
-				showSuccess: false,
+				showError: false,
+				user: {
+					nickname: "",
+					email: "",
+					id: null,
+					name: ""
+				}
 			}
 		},
 	    methods: {
@@ -45,15 +51,13 @@
                 this.login(this.email, this.password);                
 			},
 	    	login: function(email, password){
-	    		console.log(email);
-	    		console.log(password);
                 axios.post('api/login', {email, password})
 	    		.then(response=>{
-	    			localStorage.setItem('token', response.data.access_token);
+	    			this.saveUserInStorage(response.data.access_token, email);
 	    			//localStorage.setItem('expiration', );
-	    			this.$router.push({path: "/users"});
+	    			this.$router.push({path: "/users", props: {user: this.user}});
 	    		}).catch(error =>{
-	    			this.showSuccess = true;
+	    			this.showError = true;
 	    			this.errorMessage = 'Credentials are wrong!';
 	    			console.log(error);
 	    		});
@@ -67,6 +71,10 @@
 	    	handleRegisterSubmit: function(){
 	    		this.login(this.email, this.password);
 	    	},
+	    	saveUserInStorage: function(token, email){
+	    		//guardar o token no localStorage
+	    		localStorage.setItem('token', token);
+	    	}
 	    },
 	    components: {
 	    	'registration': Register,
