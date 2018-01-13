@@ -73,7 +73,7 @@ io.on('connection', function (socket) {
      * -- Difficulty Of the Bot @NotNull
      */
     socket.on('join_game_bot', function (data){
-        let game = games.joinGameBot(data.gameID, "Bot", data.difficulty);
+        let game = games.joinGameBot(data.gameID, data.difficulty);
 
         socket.join(game.gameID);
 
@@ -117,8 +117,6 @@ io.on('connection', function (socket) {
      * Index @NotNull
      */
     socket.on('click_on_piece', function (data){
-
-        console.log("I'm on click_on_piece, on gameServer. this is my DATA.", data);
         let game = games.gameByID(data.gameID);
 
         if (game == null)
@@ -134,14 +132,10 @@ io.on('connection', function (socket) {
             return;
         }
 
-        console.log("I Passed all validations. Will click on piece", data.key);
+        if(game.clickPieceM(data.key)) {
+            io.to(game.gameID).emit('game_changed', game);
+        }
 
-        let piece = game.clickPieceM(game.boardClass.board[data.key]);
-        console.log("Clicked.", piece);
-        game.boardClass.board[data.key] = piece;
-
-        console.log("New board...", game);
-        io.to(game.gameID).emit('game_changed', game);
         return;
     });
 

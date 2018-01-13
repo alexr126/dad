@@ -8,11 +8,23 @@
             <div class="bg-info">
                 <h3>Players On the game: </h3>
                 <div v-for="(player, key) in game.arrayPlayers" >
-                    <h5> {{key}} : {{player}}</h5>
+                    <h5> {{key+1}} : {{player}}</h5>
                 </div>
             </div>
             <div class="alert" :class="alert_type">
-                <strong>{{ message }} &nbsp;&nbsp;&nbsp;&nbsp; <a v-show="game.isGameEnded" v-on:click.prevent="closeGame">Close Game</a></strong>
+                <strong>
+                    {{ message }} &nbsp;&nbsp;&nbsp;&nbsp;
+                    <a v-show="game.isGameEnded" v-on:click.prevent="closeGame" class="button-green">Close Game</a>
+
+                    <div v-show="game.playerTwo == ''" >
+                        <select v-model="difficulty">
+                            <option v-for="dif in difficulties" v-bind:value="dif.value">
+                                {{ dif.text }}
+                            </option>
+                        </select>
+                        <a v-on:click.prevent="addBot" class="button-green">Add Bot And Start</a>
+                    </div>
+                </strong>
             </div>
             <div class="board">
                 <div v-for="(piece, key) of game.boardClass.board" >
@@ -28,7 +40,16 @@
     export default {
         props: ['game'],
         data: function(){
-            return {}
+            return {
+                difficulties: [
+                    {text: 'Select a Difficulty!', value: 0},
+                    {text: 'Easy', value: 1},
+                    {text: 'Normal', value: 2},
+                    {text: 'Hard', value: 3},
+                    {text: 'Insane', value: 4}
+                ],
+                difficulty: 0
+            }
         },
         computed: {
             ownPlayerNumber(){
@@ -46,11 +67,11 @@
                 }
             },
             message(){
-                console.log("1", this.game);
                 if (!this.game.isGameStarted) {
                     return "Game has not started yet";
 
-                } else if (this.game.gameEnded) {
+                } else if (this.game.isGameEnded) {
+                    console.log("Entered on gameEnded!");
                     let playerOrdered = new Array();
                     playerOrdered = this.game.arrayPlayers;
                     let scoreOrdered = new Array();
@@ -75,11 +96,13 @@
                     if(scoreOrdered[0] == scoreOrdered[1]) //ToDo: IFThere is time, do it better.
                         return this.successMessage = "There has been a Tie.";
 
-                    return this.successMessage = "Winner is " + playerOrdered[0] + " With " + scoreOrdered[0];
+                    return this.successMessage = "'" + playerOrdered[0] + "' Won! With " + scoreOrdered[0] + "Points!";
                 } else {
                     if (this.game.currentPlayerPlaying == this.ownPlayerNumber) {
                         return "It's your turn";
                     } else {
+                        console.log(this.game);
+                        console.log(this.game.arrayPlayers);
                         return "It's '" + this.game.arrayPlayers[this.game.currentPlayerPlaying - 1] + "' turn";
                     }
                 }
@@ -108,16 +131,25 @@
                 this.$emit('close-game', { gameID : this.game.gameID });
             },
             pieceImageURL: function (key) {
-                this.pathToImage(this.game.boardClass.board[key]);
+                return this.pathToImage(key);
+            },
+            addBot (){
+                if (this.game.arrayPlayers.length == 1){
+                    this.$parent.joinBot(this.game, this.difficulty);
+                }
+                else{
+                    alert("You can't add bots, Due to players being here!");
+                }
             },
             clickPiece: function (key) {
                 if (!this.game.isGameEnded && this.game.isGameStarted){
                     if(this.game.currentPlayerPlaying != this.ownPlayerNumber){
                         alert("Not your Turn");
-                    } else {
+                    }
+                    else {
                         if(this.game.boardClass.board[key].isHidden) {
                             this.$parent.clickPiece(this.game, key);
-                            this.pieceImageURL(key);
+                            this.pathToImage(key);
                         }
                         else
                             alert("You cant press One that is already Opened. Select another one!");
@@ -127,13 +159,12 @@
                     alert("Game has not started Or Has ended!");
                 }
             },
-            pathToImage(piece){
-                if(piece.isHidden){
-                    return piece.pathHidden;
+            pathToImage(index){
+                if(this.game.boardClass.board[index].isHidden){
+                    return this.game.boardClass.board[index].pathHidden;
                 }
-                return piece.pathFlip;
+                return this.game.boardClass.board[index].pathFlip;
             }
-
         }
     }
 </script>

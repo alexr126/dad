@@ -63,20 +63,21 @@
                 this.lobbyGames = games;
             },
             game_changed(game){
-                console.log(game);
+                console.log("I'm on game_change, on Multiplayer_memory. this is my game", game);
                 for (let lobbyGame of this.lobbyGames) {
                     if (game.gameID == lobbyGame.gameID) {
                         Object.assign(lobbyGame, game);
                         break;
                     }
                 }
-                console.log("One---");
-                for (let activeGame of this. activeGames) {
+                console.log("This is my lobbyGame: ", this.lobbyGames);
+                for (let activeGame of this.activeGames) {
                     if (game.gameID == activeGame.gameID) {
                         Object.assign(activeGame, game);
                         break;
                     }
                 }
+                console.log("This is my ActiveGame: ", this.activeGames);
             },
             flip(piece){
                 piece.isHidden = !piece.isHidden;
@@ -131,14 +132,12 @@
                 }
                 this.$socket.emit('join_game_player', {gameID: game.gameID, playerName: this.currentPlayer });
             },
-            joinBot(game) { //ToDo: Needs Implementation
-                for (let i = 0; i < game.playersHash.size; i++){
-                    if (game.playersHash.get(i)[0] === this.currentPlayer) { //ToDo: Fix the error of the PlayersHash.
-                        alert('Cannot join a game because your name is the same as Player ' + i+1);
-                        return;
-                    }
+            joinBot(game, difficulty) {
+                if(difficulty == 0){
+                    alert("Select a Difficulty!");
+                    return;
                 }
-                this.$socket.emit('join_game_player', {gameID: game.gameID, difficulty: 1});
+                this.$socket.emit('join_game_bot', {gameID: game.gameID, difficulty: difficulty});
             },
             clickPiece(game, key){
                 this.$socket.emit('click_on_piece', {gameID: game.gameID, key: key });
