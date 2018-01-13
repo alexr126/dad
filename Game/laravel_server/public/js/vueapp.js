@@ -46041,7 +46041,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 			axios.post('api/login', { email: email, password: password }).then(function (response) {
 				_this.saveUserInStorage(response.data.access_token, email);
 				//localStorage.setItem('expiration', );
-				_this.$router.push({ path: "/users", props: { user: _this.user } });
+				_this.$router.push({ path: "/users" });
 			}).catch(function (error) {
 				_this.showError = true;
 				_this.errorMessage = 'Credentials are wrong!';
@@ -46717,6 +46717,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 
 
@@ -46732,7 +46733,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 				name: "",
 				email: "",
 				nickname: "",
-				id: null
+				id: null,
+				password: ""
 			}
 		};
 	},
@@ -46743,32 +46745,49 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 		},
 		savedUser: function savedUser() {
 			this.currentUser = null;
-			this.$refs.usersListRef.editingUser = null;
 			this.showSuccess = true;
 			this.successMessage = 'User Saved';
 		},
 		cancelEdit: function cancelEdit() {
 			this.currentUser = null;
-			this.$refs.usersListRef.editingUser = null;
 			this.showSuccess = false;
+		},
+		deleteUser: function deleteUser() {
+			var _this = this;
+
+			axios.defaults.headers.common['Authorization'] = "Bearer " + this.userToken;
+			axios.defaults.headers.common['Accept'] = 'application/json';
+			axios.delete('api/users/' + this.user.id).then(function (response) {
+				_this.deleteUserDelete();
+			});
+		},
+		deleteUserDelete: function deleteUserDelete() {
+			var _this2 = this;
+
+			axios.defaults.headers.common['Authorization'] = "Bearer " + this.userToken;
+			axios.defaults.headers.common['Accept'] = 'application/json';
+			axios.post('api/logout').then(function (response) {
+				_this2.$router.push({ path: "/login" });
+			}).catch(function (errors) {
+				console.log(errors);
+			});
 		}
 	},
 	components: {
 		'user-edit': __WEBPACK_IMPORTED_MODULE_0__userEdit_vue___default.a
 	},
 	mounted: function mounted() {
-		var _this = this;
+		var _this3 = this;
 
 		this.userToken = localStorage.getItem('token');
 
 		axios.defaults.headers.common['Authorization'] = "Bearer " + this.userToken;
 		axios.defaults.headers.common['Accept'] = 'application/json';
 		axios.get('api/user/').then(function (response) {
-			console.log(response);
-			_this.user.name = response.data.name;
-			_this.user.email = response.data.email;
-			_this.user.nickname = response.data.nickname;
-			_this.user.id = response.data.id;
+			_this3.user.name = response.data.name;
+			_this3.user.email = response.data.email;
+			_this3.user.nickname = response.data.nickname;
+			_this3.user.id = response.data.id;
 		});
 	}
 });
@@ -46859,7 +46878,7 @@ exports = module.exports = __webpack_require__(2)(undefined);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -46900,13 +46919,35 @@ exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 module.exports = {
 	props: ['user'],
+	data: function data() {
+		return {
+			password: "",
+			passwordRetype: ""
+		};
+	},
 	methods: {
 		saveUser: function saveUser() {
 			var _this = this;
 
+			if (this.password == this.passwordRetype) {
+				this.user.password = this.password;
+			}
 			axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 			axios.defaults.headers.common['Accept'] = 'application/json';
 			axios.put('api/users/' + this.user.id, this.user).then(function (response) {
@@ -47036,6 +47077,70 @@ var render = function() {
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "form-group" }, [
+      _c("label", { attrs: { for: "inputEmail" } }, [_vm._v("New Password")]),
+      _vm._v(" "),
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.password,
+            expression: "password"
+          }
+        ],
+        staticClass: "form-control",
+        attrs: {
+          type: "password",
+          name: "password",
+          id: "inputPassword",
+          placeholder: "New Password"
+        },
+        domProps: { value: _vm.password },
+        on: {
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.password = $event.target.value
+          }
+        }
+      })
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "form-group" }, [
+      _c("label", { attrs: { for: "inputEmail" } }, [
+        _vm._v("Confirme Password")
+      ]),
+      _vm._v(" "),
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.passwordRetype,
+            expression: "passwordRetype"
+          }
+        ],
+        staticClass: "form-control",
+        attrs: {
+          type: "password",
+          name: "passwordRetype",
+          id: "inputPasswordRetype",
+          placeholder: "Confirme Password"
+        },
+        domProps: { value: _vm.passwordRetype },
+        on: {
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.passwordRetype = $event.target.value
+          }
+        }
+      })
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "form-group" }, [
       _c(
         "a",
         {
@@ -47135,6 +47240,24 @@ var render = function() {
           }
         },
         [_vm._v("Edit Profile")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          on: {
+            click: function($event) {
+              if (
+                !("button" in $event) &&
+                _vm._k($event.keyCode, "prevet", undefined, $event.key)
+              ) {
+                return null
+              }
+              _vm.deleteUser()
+            }
+          }
+        },
+        [_vm._v("Delete my profile")]
       ),
       _vm._v(" "),
       _vm.currentUser
@@ -47693,7 +47816,7 @@ exports = module.exports = __webpack_require__(2)(undefined);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -47708,6 +47831,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__lobby_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__lobby_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__game_memory_vue__ = __webpack_require__(78);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__game_memory_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__game_memory_vue__);
+//
+//
+//
 //
 //
 //
@@ -47769,7 +47895,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.lobbyGames = games;
         },
         game_changed: function game_changed(game) {
-            console.log(game);
             var _iteratorNormalCompletion = true;
             var _didIteratorError = false;
             var _iteratorError = undefined;
@@ -47798,7 +47923,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 }
             }
 
-            console.log("One---");
             var _iteratorNormalCompletion2 = true;
             var _didIteratorError2 = false;
             var _iteratorError2 = undefined;
@@ -47830,6 +47954,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         flip: function flip(piece) {
             piece.isHidden = !piece.isHidden;
             piece.wasOpen = true;
+        },
+        play_bot_again: function play_bot_again(game) {
+            this.playBotAgain(game);
+        },
+        check_for_done: function check_for_done(game) {
+            this.checkForDone(game);
         }
     },
     methods: {
@@ -47869,6 +47999,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 alert('Put a Higher Table.');
                 return;
             }
+            console.log("---", this.currentPlayer);
             this.$socket.emit('create_game', { playerName: this.currentPlayer, numberPlayer: this.numberOfPlayers, XAxis: this.XAxis, YAxis: this.YAxis });
         },
         joinPlayer: function joinPlayer(game) {
@@ -47880,16 +48011,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }
             this.$socket.emit('join_game_player', { gameID: game.gameID, playerName: this.currentPlayer });
         },
-        joinBot: function joinBot(game) {
-            //ToDo: Needs Implementation
-            for (var i = 0; i < game.playersHash.size; i++) {
-                if (game.playersHash.get(i)[0] === this.currentPlayer) {
-                    //ToDo: Fix the error of the PlayersHash.
-                    alert('Cannot join a game because your name is the same as Player ' + i + 1);
-                    return;
-                }
+        joinBot: function joinBot(game, difficulty) {
+            if (difficulty == 0) {
+                alert("Select a Difficulty!");
+                return;
             }
-            this.$socket.emit('join_game_player', { gameID: game.gameID, difficulty: 1 });
+            this.$socket.emit('join_game_bot', { gameID: game.gameID, difficulty: difficulty });
         },
         clickPiece: function clickPiece(game, key) {
             this.$socket.emit('click_on_piece', { gameID: game.gameID, key: key });
@@ -47897,6 +48024,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         close: function close(game) {
             this.$socket.emit('remove_game', { gameID: game.gameID });
+        },
+        playBotAgain: function playBotAgain(game) {
+            this.$socket.emit('play_that_bot', { gameID: game.gameID });
+        },
+        checkForDone: function checkForDone(game) {
+            this.$socket.emit('check_for_done', { gameID: game.gameID });
         }
     },
     components: {
@@ -47904,7 +48037,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         'game': __WEBPACK_IMPORTED_MODULE_1__game_memory_vue___default.a
     },
     mounted: function mounted() {
-        this.currentPlayer = String(localStorage.getItem('userNickname'));
+        var _this = this;
+
+        axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
+        axios.defaults.headers.common['Accept'] = 'application/json';
+        axios.get('api/user/').then(function (response) {
+            _this.currentPlayer = response.data.nickname;
+        });
         this.loadLobby();
     }
 });
@@ -48241,11 +48380,26 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['game'],
     data: function data() {
-        return {};
+        return {
+            difficulties: [{ text: 'Select a Difficulty!', value: 0 }, { text: 'Easy', value: 1 }, { text: 'Normal', value: 2 }, { text: 'Hard', value: 3 }, { text: 'Insane', value: 4 }],
+            difficulty: 0
+        };
     },
     computed: {
         ownPlayerNumber: function ownPlayerNumber() {
@@ -48263,10 +48417,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }
         },
         message: function message() {
-            console.log("1", this.game);
             if (!this.game.isGameStarted) {
                 return "Game has not started yet";
-            } else if (this.game.gameEnded) {
+            } else if (this.game.isGameEnded) {
+                console.log("Entered on gameEnded!");
                 var playerOrdered = new Array();
                 playerOrdered = this.game.arrayPlayers;
                 var scoreOrdered = new Array();
@@ -48292,11 +48446,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 if (scoreOrdered[0] == scoreOrdered[1]) //ToDo: IFThere is time, do it better.
                     return this.successMessage = "There has been a Tie.";
 
-                return this.successMessage = "Winner is " + playerOrdered[0] + " With " + scoreOrdered[0];
+                return this.successMessage = "'" + playerOrdered[0] + "' Won! With " + scoreOrdered[0] + "Points!";
             } else {
                 if (this.game.currentPlayerPlaying == this.ownPlayerNumber) {
                     return "It's your turn";
                 } else {
+                    console.log(this.game);
+                    console.log(this.game.arrayPlayers);
                     return "It's '" + this.game.arrayPlayers[this.game.currentPlayerPlaying - 1] + "' turn";
                 }
             }
@@ -48325,8 +48481,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
 
         pieceImageURL: function pieceImageURL(key) {
-            this.pathToImage(this.game.boardClass.board[key]);
+            return this.pathToImage(key);
         },
+        addBot: function addBot() {
+            if (this.game.arrayPlayers.length == 1) {
+                this.$parent.joinBot(this.game, this.difficulty);
+            } else {
+                alert("You can't add bots, Due to players being here!");
+            }
+        },
+
         clickPiece: function clickPiece(key) {
             if (!this.game.isGameEnded && this.game.isGameStarted) {
                 if (this.game.currentPlayerPlaying != this.ownPlayerNumber) {
@@ -48334,18 +48498,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 } else {
                     if (this.game.boardClass.board[key].isHidden) {
                         this.$parent.clickPiece(this.game, key);
-                        this.pieceImageURL(key);
+                        this.pathToImage(key);
                     } else alert("You cant press One that is already Opened. Select another one!");
                 }
             } else {
                 alert("Game has not started Or Has ended!");
             }
         },
-        pathToImage: function pathToImage(piece) {
-            if (piece.isHidden) {
-                return piece.pathHidden;
+        pathToImage: function pathToImage(index) {
+            if (this.game.boardClass.board[index].isHidden) {
+                return this.game.boardClass.board[index].pathHidden;
             }
-            return piece.pathFlip;
+            return this.game.boardClass.board[index].pathFlip;
         }
     }
 });
@@ -48376,7 +48540,7 @@ var render = function() {
           _vm._v(" "),
           _vm._l(_vm.game.arrayPlayers, function(player, key) {
             return _c("div", [
-              _c("h5", [_vm._v(" " + _vm._s(key) + " : " + _vm._s(player))])
+              _c("h5", [_vm._v(" " + _vm._s(key + 1) + " : " + _vm._s(player))])
             ])
           })
         ],
@@ -48385,7 +48549,11 @@ var render = function() {
       _vm._v(" "),
       _c("div", { staticClass: "alert", class: _vm.alert_type }, [
         _c("strong", [
-          _vm._v(_vm._s(_vm.message) + "      "),
+          _vm._v(
+            "\n                " +
+              _vm._s(_vm.message) +
+              "     \n                "
+          ),
           _c(
             "a",
             {
@@ -48397,6 +48565,7 @@ var render = function() {
                   expression: "game.isGameEnded"
                 }
               ],
+              staticClass: "button-green",
               on: {
                 click: function($event) {
                   $event.preventDefault()
@@ -48405,6 +48574,73 @@ var render = function() {
               }
             },
             [_vm._v("Close Game")]
+          ),
+          _vm._v(" "),
+          _c(
+            "div",
+            {
+              directives: [
+                {
+                  name: "show",
+                  rawName: "v-show",
+                  value: _vm.game.playerTwo == "",
+                  expression: "game.playerTwo == ''"
+                }
+              ]
+            },
+            [
+              _c(
+                "select",
+                {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.difficulty,
+                      expression: "difficulty"
+                    }
+                  ],
+                  on: {
+                    change: function($event) {
+                      var $$selectedVal = Array.prototype.filter
+                        .call($event.target.options, function(o) {
+                          return o.selected
+                        })
+                        .map(function(o) {
+                          var val = "_value" in o ? o._value : o.value
+                          return val
+                        })
+                      _vm.difficulty = $event.target.multiple
+                        ? $$selectedVal
+                        : $$selectedVal[0]
+                    }
+                  }
+                },
+                _vm._l(_vm.difficulties, function(dif) {
+                  return _c("option", { domProps: { value: dif.value } }, [
+                    _vm._v(
+                      "\n                            " +
+                        _vm._s(dif.text) +
+                        "\n                        "
+                    )
+                  ])
+                })
+              ),
+              _vm._v(" "),
+              _c(
+                "a",
+                {
+                  staticClass: "btn btn-info",
+                  on: {
+                    click: function($event) {
+                      $event.preventDefault()
+                      _vm.addBot($event)
+                    }
+                  }
+                },
+                [_vm._v("Add Bot And Start")]
+              )
+            ]
           )
         ])
       ]),
@@ -48452,7 +48688,13 @@ var render = function() {
     _c(
       "div",
       [
+        _c("h3", { staticClass: "text-center" }, [_vm._v(_vm._s(_vm.title))]),
+        _vm._v(" "),
+        _c("p", [_vm._v(" Hi, " + _vm._s(_vm.currentPlayer))]),
+        _vm._v(" "),
         _c("hr"),
+        _vm._v(" "),
+        _c("br"),
         _vm._v(" "),
         _c("h3", { staticClass: "text-center" }, [_vm._v("Lobby")]),
         _vm._v(" "),
@@ -49396,7 +49638,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 			axios.defaults.headers.common['Accept'] = 'application/json';
 			axios.post('api/logout').then(function (response) {
 				localStorage.removeItem('token');
-				localStorage.removeItem('userData');
 				//localStorage.removeItem('expiration');
 				_this.$router.push({ path: "/login" });
 			}).catch(function (errors) {

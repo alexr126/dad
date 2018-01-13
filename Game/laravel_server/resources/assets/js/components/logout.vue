@@ -15,7 +15,6 @@
 	            axios.post('api/logout')
                 .then(response=>{
                 	localStorage.removeItem('token');
-                	localStorage.removeItem('userData');
                 	//localStorage.removeItem('expiration');
             		this.$router.push({path: "/login"});
                 }).catch(errors=>{

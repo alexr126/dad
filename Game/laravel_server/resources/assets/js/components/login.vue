@@ -55,7 +55,7 @@
 	    		.then(response=>{
 	    			this.saveUserInStorage(response.data.access_token, email);
 	    			//localStorage.setItem('expiration', );
-	    			this.$router.push({path: "/users", props: {user: this.user}});
+	    			this.$router.push({path: "/users"});
 	    		}).catch(error =>{
 	    			this.showError = true;
 	    			this.errorMessage = 'Credentials are wrong!';

@@ -15,6 +15,7 @@
 			<strong>{{ successMessage }}</strong>
 		</div>
 		<button v-on:click="currentUser=user">Edit Profile</button>
+		<button v-on:click.prevet="deleteUser()">Delete my profile</button>
 		<user-edit :user="currentUser" @user-saved="savedUser" @user-canceled="cancelEdit" v-if="currentUser"></user-edit>				
 	</div>				
 </template>
@@ -34,7 +35,8 @@
 		        	name: "",
 		        	email: "",
 		        	nickname: "",
-		        	id: null
+		        	id: null,
+		        	password: ""
 		        }
 			}
 		},
@@ -45,15 +47,31 @@
 	        },
 	        savedUser: function(){
 	            this.currentUser = null;
-	            this.$refs.usersListRef.editingUser = null;
 	            this.showSuccess = true;
 	            this.successMessage = 'User Saved';
 	        },
 	        cancelEdit: function(){
 	            this.currentUser = null;
-	            this.$refs.usersListRef.editingUser = null;
 	            this.showSuccess = false;
 	        },
+	        deleteUser: function(){
+	        	axios.defaults.headers.common['Authorization'] ="Bearer "+ this.userToken;
+	        	axios.defaults.headers.common['Accept'] = 'application/json';
+	            axios.delete('api/users/'+this.user.id).then(response=>{
+                	this.deleteUserDelete();
+	            });
+	        },
+	        deleteUserDelete: function(){
+            	axios.defaults.headers.common['Authorization'] ="Bearer "+ this.userToken;
+	        	axios.defaults.headers.common['Accept'] = 'application/json';
+	            axios.post('api/logout')
+                .then(response=>{
+        			this.$router.push({path: "/login"});
+                }).catch(errors=>{
+                	console.log(errors);
+                });
+
+	        }
 	    },
 	    components: {
 	    	'user-edit': UserEdit
@@ -64,7 +82,6 @@
 	    	axios.defaults.headers.common['Authorization'] = "Bearer "+ this.userToken;
             axios.defaults.headers.common['Accept'] = 'application/json';
             axios.get('api/user/').then(response=>{
-            	console.log(response);
             	this.user.name = response.data.name;
             	this.user.email = response.data.email;
             	this.user.nickname = response.data.nickname;

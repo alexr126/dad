@@ -48,14 +48,24 @@ class UserControllerAPI extends Controller
     {
         return new UserResource(User::find($id));
     }   
-/*
+
     public function update(Request $request, $id)
     {
-        $request->validate([
-                'name' => 'required',
-                'email' => 'required|email|unique:users,email,'.$id,
-                'age' => 'integer|between:18,75'
+        if($request->password){
+            $request->validate([
+                'name' => '',
+                'email' => 'email|unique:users,email,'.$id,
+                'nickname' => 'unique:users,nickname',
+                'password' => 'min:3'
             ]);
+        }else{
+            $request->validate([
+                'name' => '',
+                'email' => 'email|unique:users,email,'.$id,
+                'nickname' => 'unique:users,nickname'
+            ]);
+        }
+
         $user = User::findOrFail($id);
         $user->update($request->all());
         return new UserResource($user);
@@ -67,6 +77,7 @@ class UserControllerAPI extends Controller
         $user->delete();
         return response()->json(null, 204);
     }
+    /*
     public function emailAvailable(Request $request)
     {
         $totalEmail = 1;
