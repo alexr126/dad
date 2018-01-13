@@ -22,7 +22,7 @@
                                 {{ dif.text }}
                             </option>
                         </select>
-                        <a v-on:click.prevent="addBot" class="button-green">Add Bot And Start</a>
+                        <a v-on:click.prevent="addBot" class="btn btn-info">Add Bot And Start</a>
                     </div>
                 </strong>
             </div>
@@ -158,6 +158,7 @@
                 else{
                     alert("Game has not started Or Has ended!");
                 }
+
             },
             pathToImage(index){
                 if(this.game.boardClass.board[index].isHidden){

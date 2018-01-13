@@ -2,10 +2,9 @@
     <div>
         <div>
             <h3 class="text-center">{{ title }}</h3>
-            <br>
-            <h2>Current Player : {{ currentPlayer }}</h2>
-            <p>Set current player name <input v-model.trim="currentPlayer"></p>
+            <p> Hi, {{currentPlayer}}</p>
             <hr>
+            <br>
             <h3 class="text-center">Lobby</h3>
             <p>
                 <p>Number of Players <input v-model.trim="numberOfPlayers"></p>
@@ -32,7 +31,7 @@
         data: function(){
             return {
                 title: 'Multiplayer Memory',
-                currentPlayer: 'Player X',
+                currentPlayer: '',
                 numberOfPlayers: 2,
                 XAxis: 0,
                 YAxis: 0,
@@ -63,25 +62,28 @@
                 this.lobbyGames = games;
             },
             game_changed(game){
-                console.log("I'm on game_change, on Multiplayer_memory. this is my game", game);
                 for (let lobbyGame of this.lobbyGames) {
                     if (game.gameID == lobbyGame.gameID) {
                         Object.assign(lobbyGame, game);
                         break;
                     }
                 }
-                console.log("This is my lobbyGame: ", this.lobbyGames);
                 for (let activeGame of this.activeGames) {
                     if (game.gameID == activeGame.gameID) {
                         Object.assign(activeGame, game);
                         break;
                     }
                 }
-                console.log("This is my ActiveGame: ", this.activeGames);
             },
             flip(piece){
                 piece.isHidden = !piece.isHidden;
                 piece.wasOpen = true;
+            },
+            play_bot_again(game){
+                this.playBotAgain(game);
+            },
+            check_for_done(game){
+                this.checkForDone(game);
             }
         },
         methods: {
@@ -121,6 +123,7 @@
                     alert('Put a Higher Table.');
                     return;
                 }
+                console.log("---", this.currentPlayer);
                 this.$socket.emit('create_game', { playerName: this.currentPlayer, numberPlayer: this.numberOfPlayers, XAxis: this.XAxis, YAxis: this.YAxis});
             },
             joinPlayer(game) {
@@ -144,7 +147,13 @@
                 // this.flip(game.boardClass.board[key]);
             },
             close(game){
-                this.$socket.emit('remove_game', {gameID : game.gameID})
+                this.$socket.emit('remove_game', {gameID : game.gameID});
+            },
+            playBotAgain(game){
+                this.$socket.emit('play_that_bot', {gameID : game.gameID});
+            },
+            checkForDone(game){
+                this.$socket.emit('check_for_done', {gameID : game.gameID});
             }
         },
         components: {
@@ -152,6 +161,11 @@
             'game': MemoryGame,
         },
         mounted() {
+            axios.defaults.headers.common['Authorization'] = "Bearer "+ localStorage.getItem('token');
+            axios.defaults.headers.common['Accept'] = 'application/json';
+            axios.get('api/user/').then(response=>{
+                this.currentPlayer = response.data.nickname;
+            });
             this.loadLobby();
         }
 
