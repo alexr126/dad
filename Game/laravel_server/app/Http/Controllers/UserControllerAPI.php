@@ -38,11 +38,17 @@ class UserControllerAPI extends Controller
         return response()->json(new UserResource($user), 201);
     }
 
-    /*public function getUser($id)
+    public function getUserByEmail($email)
+    {
+        $user = DB::table('users')->select()->where('email', '=', $email)->get();
+        return $user;
+    }
+
+    public function getUser($id)
     {
         return new UserResource(User::find($id));
     }   
-
+/*
     public function update(Request $request, $id)
     {
         $request->validate([

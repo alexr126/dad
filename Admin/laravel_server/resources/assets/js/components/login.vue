@@ -6,7 +6,7 @@
 				<label for="inputName">Username</label>
 				<input type="text" class="form-control"
 		               name="email" id="inputEmail" 
-		               placeholder="Enter your e-mail" v-model="email"/>
+		               placeholder="Administrator e-mail" v-model="email"/>
 			</div>
 			<div class="form-group">
 				<label for="inputPassword">Password</label>
@@ -38,7 +38,12 @@
 		},
 	    methods: {
             handleLoginSubmit: function(){
-                this.login(this.email, this.password);                
+            	if(this.email == "admin@mail.dad"){
+                	this.login(this.email, this.password); 
+                }else{
+                	this.showSuccess = true;
+	    			this.errorMessage = 'Access denied!';
+                }             
 			},
 	    	login: function(email, password){
                 axios.post('api/login', {email, password})

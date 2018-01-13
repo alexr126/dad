@@ -9,24 +9,18 @@
 	            placeholder="Fullname"/>
 	    </div>
 	    <div class="form-group">
+	        <label for="inputNickname">Nickname</label>
+	        <input
+	            type="text" class="form-control" v-model="user.nickname"
+	            name="nickname" id="inputNickname"
+	            placeholder="Nickname"/>
+	    </div>
+	    <div class="form-group">
 	        <label for="inputEmail">Email</label>
 	        <input
 	            type="email" class="form-control" v-model="user.email"
 	            name="email" id="inputEmail"
 	            placeholder="Email address"/>
-	    </div>
-	    <div class="form-group">
-	        <label for="inputAge">Age</label>
-	        <input
-	            type="number" class="form-control" v-model="user.age"
-	            name="age" id="inputAge"
-	            placeholder="Age"/>
-	    </div>
-	    <div class="form-group">
-	        <label for="department_id">Department:</label>
-	        <select class="form-control" id="department_id" name="department_id" v-model="user.department_id" >
-	            <option v-for="department in departments" v-bind:value="department.id"> {{ department.name }} </option>
-	        </select>
 	    </div>
 
 	    <div class="form-group">
@@ -38,9 +32,11 @@
 
 <script type="text/javascript">
 	module.exports={
-		props: ['user', 'departments'],
+		props: ['user'],
 	    methods: {
 	        saveUser: function(){
+	        	axios.defaults.headers.common['Authorization'] = "Bearer "+localStorage.getItem('token');
+            	axios.defaults.headers.common['Accept'] = 'application/json';
 	            axios.put('api/users/'+this.user.id, this.user)
 	                .then(response=>{
 	                	// Copy object properties from response.data.data to this.user
@@ -50,6 +46,8 @@
 	                });
 	        },
 	        cancelEdit: function(){
+	        	axios.defaults.headers.common['Authorization'] = "Bearer "+localStorage.getItem('token');;
+            	axios.defaults.headers.common['Accept'] = 'application/json';
 	        	axios.get('api/users/'+this.user.id)
 	                .then(response=>{
 	                	// Copy object properties from response.data.data to this.user

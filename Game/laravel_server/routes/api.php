@@ -25,6 +25,7 @@ Route::group(['middleware'=>'auth:api'], function(){
     Route::get('users', 'UserControllerAPI@getUsers');
     Route::get('users/emailavailable', 'UserControllerAPI@emailAvailable');
     Route::get('users/{id}', 'UserControllerAPI@getUser');
+    Route::get('user/email/{email}', 'UserControllerAPI@getUserByEmail');
     Route::put('users/{id}', 'UserControllerAPI@update');
     Route::delete('users/{id}', 'UserControllerAPI@delete');
 });

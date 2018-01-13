@@ -39,7 +39,7 @@ const routes = [
 const router = new VueRouter({
   routes:routes
 });
-
+//proteger router-link
 router.beforeEach(
   (to, from, next) =>{
     if(to.meta.forVisitors){
@@ -64,7 +64,7 @@ const app = new Vue({
   data:{
     player1:undefined,
     player2: undefined,
-    userToken: localStorage.getItem('token')
+    userToken: localStorage.getItem('token'),
   }
 }).$mount('#app');
 
